@@ -20,6 +20,7 @@ export function ClientContractPage() {
   const [step, setStep] = useState<'terms' | 'signature' | 'complete'>('terms');
   const [agreements, setAgreements] = useState<Record<string, boolean>>({});
   const [allAgreed, setAllAgreed] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [signatureData, setSignatureData] = useState<string>('');
   const [submitting, setSubmitting] = useState(false);
 
