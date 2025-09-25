@@ -54,40 +54,6 @@ export function DashboardPage() {
       <main className="dashboard-main">
         <div className="dashboard-container">
           
-          {/* 통계 카드들 */}
-          <section className="stats-section">
-            <h2 className="section-title">계약 현황</h2>
-            <div className="stats-grid">
-                  <div className="stat-card">
-                    <div className="stat-content">
-                      <div className="stat-value">{stats.totalContracts}</div>
-                      <div className="stat-label">총 계약</div>
-                    </div>
-                  </div>
-
-                  <div className="stat-card">
-                    <div className="stat-content">
-                      <div className="stat-value">{stats.pendingContracts}</div>
-                      <div className="stat-label">진행중</div>
-                    </div>
-                  </div>
-
-                  <div className="stat-card">
-                    <div className="stat-content">
-                      <div className="stat-value">{stats.completedContracts}</div>
-                      <div className="stat-label">완료</div>
-                    </div>
-                  </div>
-
-                  <div className="stat-card">
-                    <div className="stat-content">
-                      <div className="stat-value">{stats.monthlyContracts}</div>
-                      <div className="stat-label">이번달 계약</div>
-                    </div>
-                  </div>
-            </div>
-          </section>
-
           {/* 빠른 액션 */}
           <section className="actions-section">
             <h2 className="section-title">빠른 작업</h2>
@@ -134,6 +100,40 @@ export function DashboardPage() {
                       <p className="action-description">
                         시스템 설정을 변경하세요
                       </p>
+                    </div>
+                  </div>
+            </div>
+          </section>
+
+          {/* 통계 카드들 */}
+          <section className="stats-section">
+            <h2 className="section-title">계약 현황</h2>
+            <div className="stats-grid">
+                  <div className="stat-card">
+                    <div className="stat-content">
+                      <div className="stat-value">{stats.totalContracts}</div>
+                      <div className="stat-label">총 계약</div>
+                    </div>
+                  </div>
+
+                  <div className="stat-card">
+                    <div className="stat-content">
+                      <div className="stat-value">{stats.pendingContracts}</div>
+                      <div className="stat-label">진행중</div>
+                    </div>
+                  </div>
+
+                  <div className="stat-card">
+                    <div className="stat-content">
+                      <div className="stat-value">{stats.completedContracts}</div>
+                      <div className="stat-label">완료</div>
+                    </div>
+                  </div>
+
+                  <div className="stat-card">
+                    <div className="stat-content">
+                      <div className="stat-value">{stats.monthlyContracts}</div>
+                      <div className="stat-label">이번달 계약</div>
                     </div>
                   </div>
             </div>
