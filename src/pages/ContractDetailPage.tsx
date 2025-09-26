@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { ContractInfo } from '../types';
 import { ROUTES, CONTRACT_STATUS_LABELS } from '../utils/constants';
+import { CONTRACT_TERMS, FEE_CONDITIONS, PRIVACY_POLICY } from '../utils/contractTerms';
 import { format } from 'date-fns';
 
 export function ContractDetailPage() {
@@ -82,6 +83,27 @@ export function ContractDetailPage() {
   const handleLogout = () => {
     logout();
     navigate(ROUTES.LOGIN);
+  };
+
+  const handlePdfDownload = () => {
+    // TODO: 실제 PDF 생성 및 다운로드 로직 구현
+    const contractData = {
+      contract,
+      terms: CONTRACT_TERMS,
+      feeConditions: FEE_CONDITIONS,
+      privacyPolicy: PRIVACY_POLICY,
+    };
+    
+    console.log('PDF 다운로드 데이터:', contractData);
+    alert('PDF 다운로드가 시작됩니다.');
+  };
+
+  const handleKakaoSend = () => {
+    // TODO: 실제 카카오톡 발송 로직 구현
+    const contractLink = `${window.location.origin}/client-contract/${contract?.id}`;
+    
+    console.log('카카오톡 발송 링크:', contractLink);
+    alert(`카카오톡으로 계약서 링크가 발송됩니다.\n${contractLink}`);
   };
 
   if (loading) {
@@ -164,6 +186,16 @@ export function ContractDetailPage() {
                 <span className="label">계약 금액:</span>
                 <span className="value amount">{contract.totalAmount.toLocaleString()}원</span>
               </div>
+            </div>
+            
+            {/* PDF 다운로드 및 카카오톡 발송 버튼 */}
+            <div className="contract-actions-top">
+              <button onClick={handlePdfDownload} className="btn-primary btn-download">
+                📄 PDF로 내려받기
+              </button>
+              <button onClick={handleKakaoSend} className="btn-kakao">
+                💬 카카오톡 발송
+              </button>
             </div>
           </div>
 
@@ -280,15 +312,69 @@ export function ContractDetailPage() {
                 </div>
               </div>
             </section>
+
+            {/* 수수료 및 정산 조건 */}
+            <section className="detail-section">
+              <h3 className="section-title">{FEE_CONDITIONS.title}</h3>
+              <div className="section-content">
+                <div className="contract-content-card fee-conditions-card">
+                  <div className="card-content">
+                    <pre className="fee-conditions-content">{FEE_CONDITIONS.content}</pre>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* 제휴계약서 조항들 */}
+            <section className="detail-section">
+              <h3 className="section-title">제휴계약서 조항</h3>
+              <div className="section-content">
+                <div className="contract-terms-grid">
+                  {CONTRACT_TERMS.map((term) => (
+                    <div key={term.id} className="contract-term-card">
+                      <div className="term-header">
+                        <h4 className="term-title">{term.title}</h4>
+                        <div className="term-badges">
+                          <span className={`term-badge ${term.isRequired ? 'required' : 'optional'}`}>
+                            {term.isRequired ? '필수' : '선택'}
+                          </span>
+                          <span className={`category-badge category-${term.category}`}>
+                            {term.category === 'main' ? '주요조항' :
+                             term.category === 'fee' ? '수수료' :
+                             term.category === 'privacy' ? '개인정보' :
+                             term.category === 'service' ? '서비스' : term.category}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="term-content">
+                        <pre className="term-text">{term.content}</pre>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+
+            {/* 개인정보처리방침 */}
+            <section className="detail-section">
+              <h3 className="section-title">{PRIVACY_POLICY.title}</h3>
+              <div className="section-content">
+                <div className="contract-content-card privacy-policy-card">
+                  <div className="card-header">
+                    <span className="term-badge required">필수</span>
+                  </div>
+                  <div className="card-content">
+                    <pre className="privacy-policy-content">{PRIVACY_POLICY.content}</pre>
+                  </div>
+                </div>
+              </div>
+            </section>
           </div>
 
           {/* 액션 버튼들 */}
           <div className="contract-actions">
             <button className="btn-secondary" onClick={handleBack}>
               목록으로 돌아가기
-            </button>
-            <button className="btn-primary">
-              PDF 다운로드
             </button>
           </div>
         </div>
