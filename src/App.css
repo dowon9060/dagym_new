@@ -2576,6 +2576,156 @@ body {
   font-family: 'Courier New', monospace;
 }
 
+/* 계약 상태 및 관리 스타일 */
+.contract-status-container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.contract-status {
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  border: 2px solid;
+}
+
+.contract-status.completed {
+  color: var(--success);
+  background: rgba(34, 197, 94, 0.1);
+  border-color: var(--success);
+}
+
+.contract-status.pending {
+  color: var(--warning);
+  background: rgba(245, 158, 11, 0.1);
+  border-color: var(--warning);
+}
+
+.contract-status.none {
+  color: var(--error);
+  background: rgba(239, 68, 68, 0.1);
+  border-color: var(--error);
+}
+
+.btn-resend {
+  padding: var(--space-2) var(--space-4);
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.btn-resend:hover:not(:disabled) {
+  background: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+.btn-resend:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.contract-pdf-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.existing-pdf {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+}
+
+.pdf-info {
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+}
+
+.no-pdf {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  font-style: italic;
+}
+
+.btn-download {
+  padding: var(--space-1) var(--space-3);
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.btn-download:hover {
+  background: var(--bg-card);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.pdf-upload {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.pdf-upload .file-input {
+  display: none;
+}
+
+.upload-label {
+  padding: var(--space-2) var(--space-4);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 2px dashed var(--border-light);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.upload-label:hover {
+  border-color: var(--primary);
+  background: var(--bg-tertiary);
+}
+
+.status-change-buttons {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.btn-status-change {
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.btn-status-change:hover {
+  background: var(--warning);
+  color: white;
+  border-color: var(--warning);
+}
+
 /* ============================================= */
 /* 계약서 작성 페이지 */
 /* ============================================= */

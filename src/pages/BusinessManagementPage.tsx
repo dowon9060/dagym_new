@@ -44,6 +44,9 @@ export function BusinessManagementPage() {
       registrationDate: '2024-01-15 14:30:00',
       status: '활성',
       contractStatus: 'contracted', // 'registered', 'contracted', 'uncontracted'
+      contractDate: '2024-01-16 10:30:00', // 계약 완료일
+      contractPdfUrl: '/contracts/contract-001.pdf',
+      lastSentDate: '2024-01-15 15:00:00',
       contractCount: 3,
       facilityCount: 2,
     },
@@ -60,6 +63,9 @@ export function BusinessManagementPage() {
       registrationDate: '2024-01-10 09:15:00',
       status: '활성',
       contractStatus: 'registered', // 등록완료 (아직 계약 안됨)
+      contractDate: null,
+      contractPdfUrl: null,
+      lastSentDate: '2024-01-10 10:00:00',
       contractCount: 1,
       facilityCount: 1,
     },
@@ -76,6 +82,9 @@ export function BusinessManagementPage() {
       registrationDate: '2024-01-05 16:45:00',
       status: '비활성',
       contractStatus: 'uncontracted', // 미계약
+      contractDate: null,
+      contractPdfUrl: null,
+      lastSentDate: '2024-01-05 17:00:00',
       contractCount: 0,
       facilityCount: 1,
     },
@@ -84,7 +93,7 @@ export function BusinessManagementPage() {
       businessName: '피트니스월드',
       businessNumber: '456-78-90123',
       representativeName: '최대표',
-      businessType: '체육시설업',
+      businessType: '서비스업',
       businessCategory: '헬스장',
       businessAddress: '서울특별시 서초구 서초대로 321',
       businessDetailAddress: '서초빌딩 4층',
@@ -92,6 +101,9 @@ export function BusinessManagementPage() {
       registrationDate: '2024-01-20 11:20:00',
       status: '활성',
       contractStatus: 'contracted', // 계약완료
+      contractDate: '2024-01-21 14:15:00', // 계약 완료일
+      contractPdfUrl: '/contracts/contract-004.pdf',
+      lastSentDate: '2024-01-20 12:00:00',
       contractCount: 2,
       facilityCount: 3,
     },
@@ -307,6 +319,8 @@ export function BusinessManagementPage() {
 // 사업자 상세보기/수정 모달 컴포넌트
 function BusinessDetailModal({ business, onClose }: { business: any; onClose: () => void }) {
   const [isEditing, setIsEditing] = useState(false);
+  const [contractPdf, setContractPdf] = useState<File | null>(null);
+  const [isSending, setIsSending] = useState(false);
   const [businessFiles, setBusinessFiles] = useState<{[key: string]: File | null}>({
     businessRegistrationCert: null,
     sportsLicenseCert: null
@@ -345,6 +359,56 @@ function BusinessDetailModal({ business, onClose }: { business: any; onClose: ()
       ...prev,
       [field]: file
     }));
+  };
+
+  // 계약서 PDF 업로드
+  const handleContractPdfUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type === 'application/pdf') {
+      setContractPdf(file);
+    } else {
+      alert('PDF 파일만 업로드 가능합니다.');
+    }
+  };
+
+  // 계약서 재발송
+  const handleResendContract = async () => {
+    setIsSending(true);
+    try {
+      // TODO: 실제 재발송 API 호출
+      console.log('계약서 재발송 중...', business.businessName);
+      await new Promise(resolve => setTimeout(resolve, 2000)); // 시뮬레이션
+      alert('계약서가 재발송되었습니다.');
+    } catch (error) {
+      console.error('재발송 실패:', error);
+      alert('재발송에 실패했습니다.');
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  // 계약서 PDF 다운로드
+  const handleDownloadContract = () => {
+    if (business.contractPdfUrl) {
+      // TODO: 실제 다운로드 로직
+      const link = document.createElement('a');
+      link.href = business.contractPdfUrl;
+      link.download = `${business.businessName}_계약서.pdf`;
+      link.click();
+    }
+  };
+
+  // 계약 상태 변경 (임시 - 실제로는 서명 완료 시 자동으로 변경됨)
+  const handleContractStatusChange = async (newStatus: string) => {
+    try {
+      // TODO: 실제 상태 변경 API 호출
+      console.log('계약 상태 변경:', newStatus);
+      alert(`계약 상태가 ${newStatus === 'contracted' ? '계약완료' : '계약전'}로 변경되었습니다.`);
+      // 페이지 새로고침 또는 상태 업데이트 필요
+    } catch (error) {
+      console.error('상태 변경 실패:', error);
+      alert('상태 변경에 실패했습니다.');
+    }
   };
 
   const formatDateTime = (dateTime: string) => {
@@ -581,6 +645,109 @@ function BusinessDetailModal({ business, onClose }: { business: any; onClose: ()
                 <label className="form-label">등록일시</label>
                 <div className="input-field readonly">{formatDateTime(business.registrationDate)}</div>
               </div>
+
+            </div>
+          </div>
+
+          {/* 계약 상태 및 관리 */}
+          <div className="form-section">
+            <h2 className="section-title">계약 상태 및 관리</h2>
+            <div className="form-fields-vertical">
+              
+              {/* 계약 상태 */}
+              <div className="form-group">
+                <label className="form-label">계약 상태</label>
+                <div className="contract-status-container">
+                  <span className={`contract-status ${business.contractStatus === 'contracted' ? 'completed' : business.contractStatus === 'registered' ? 'pending' : 'none'}`}>
+                    {business.contractStatus === 'contracted' ? '✅ 계약완료' : 
+                     business.contractStatus === 'registered' ? '⏳ 계약전' : 
+                     '❌ 미계약'}
+                  </span>
+                  {!isEditing && business.contractStatus !== 'contracted' && (
+                    <button
+                      type="button"
+                      onClick={handleResendContract}
+                      disabled={isSending}
+                      className="btn-resend"
+                    >
+                      {isSending ? '발송 중...' : '계약서 재발송'}
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* 계약일시 */}
+              {business.contractDate && (
+                <div className="form-group">
+                  <label className="form-label">계약일시</label>
+                  <div className="input-field readonly">{formatDateTime(business.contractDate)}</div>
+                </div>
+              )}
+
+              {/* 마지막 발송일시 */}
+              <div className="form-group">
+                <label className="form-label">마지막 발송일시</label>
+                <div className="input-field readonly">{formatDateTime(business.lastSentDate)}</div>
+              </div>
+
+              {/* 계약서 PDF 관리 */}
+              <div className="form-group">
+                <label className="form-label">계약서 PDF</label>
+                <div className="contract-pdf-container">
+                  {business.contractPdfUrl ? (
+                    <div className="existing-pdf">
+                      <span className="pdf-info">📄 계약서 등록됨</span>
+                      <button
+                        type="button"
+                        onClick={handleDownloadContract}
+                        className="btn-download"
+                      >
+                        다운로드
+                      </button>
+                    </div>
+                  ) : (
+                    <span className="no-pdf">등록된 계약서가 없습니다</span>
+                  )}
+                  
+                  {isEditing && (
+                    <div className="pdf-upload">
+                      <input
+                        type="file"
+                        accept=".pdf"
+                        onChange={handleContractPdfUpload}
+                        className="file-input"
+                        id="contractPdf"
+                      />
+                      <label htmlFor="contractPdf" className="upload-label">
+                        {contractPdf ? contractPdf.name : '새 계약서 PDF 업로드'}
+                      </label>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* 임시 상태 변경 버튼 (개발/테스트용) */}
+              {!isEditing && (
+                <div className="form-group">
+                  <label className="form-label">상태 변경 (테스트용)</label>
+                  <div className="status-change-buttons">
+                    <button
+                      type="button"
+                      onClick={() => handleContractStatusChange('registered')}
+                      className="btn-status-change"
+                    >
+                      계약전으로 변경
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleContractStatusChange('contracted')}
+                      className="btn-status-change"
+                    >
+                      계약완료로 변경
+                    </button>
+                  </div>
+                </div>
+              )}
 
             </div>
           </div>

@@ -119,7 +119,8 @@ export function PlanSelectionPage() {
         }
         
         return filtered;
-      });
+      }
+    });
   };
 
   // 과금 주기 또는 파트너 상태 변경 시 선택된 플랜들의 가격 업데이트
@@ -228,8 +229,6 @@ export function PlanSelectionPage() {
             필요한 서비스 플랜을 선택해주세요
           </p>
 
-        {/* 옵션 설정 */}
-
         {/* 운영솔루션 */}
         <div className="form-section">
           <h2 className="section-title">운영솔루션</h2>
@@ -246,13 +245,6 @@ export function PlanSelectionPage() {
                   const isDagymManager = plan.id === 'manager';
                   // 다짐매니저는 항상 선택 가능, 다른 부가서비스는 다짐매니저 선택 후에만 선택 가능
                   const isDisabled = !isDagymManager && !isDagymManagerSelected;
-
-                  // 디버깅 정보 (개발 중에만)
-                  if (plan.id === 'manager') {
-                    console.log('다짐매니저:', { isSelected, isDagymManagerSelected });
-                  } else {
-                    console.log(`${plan.name}:`, { isSelected, isDisabled, isDagymManagerSelected });
-                  }
 
                   return (
                     <div 
@@ -368,7 +360,6 @@ export function PlanSelectionPage() {
             </div>
           </div>
         </div>
-
 
         {/* 버튼 영역 */}
         <div className="form-actions">
