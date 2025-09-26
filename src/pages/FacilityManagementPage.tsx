@@ -50,6 +50,15 @@ export function FacilityManagementPage() {
       photos: ['gym1.jpg', 'gym2.jpg', 'gym3.jpg'],
       membershipCards: ['membership1.jpg'],
       notice: '신규 회원 할인 이벤트 진행중입니다.',
+      currentPlans: {
+        isPartner: true,
+        operationSolutions: [
+          { id: 'manager', name: '다짐매니저 (회원관리프로그램)', price: 250000, billingType: 'yearly' }
+        ],
+        revenueSolutions: [
+          { id: 'standard', name: '스탠다드플랜', price: 3828000, billingType: 'yearly' }
+        ]
+      },
       operatingHours: {
         monday: { start: '06:00', end: '24:00', closed: false },
         tuesday: { start: '06:00', end: '24:00', closed: false },
@@ -75,6 +84,14 @@ export function FacilityManagementPage() {
       photos: ['crossfit1.jpg', 'crossfit2.jpg'],
       membershipCards: ['membership2.jpg'],
       notice: '초보자 클래스 신규 오픈!',
+      currentPlans: {
+        isPartner: false,
+        operationSolutions: [
+          { id: 'manager', name: '다짐매니저 (회원관리프로그램)', price: 646800, billingType: 'yearly' },
+          { id: 'multi-branch', name: '다지점 관리', price: 396000, billingType: 'yearly' }
+        ],
+        revenueSolutions: []
+      },
       operatingHours: {
         monday: { start: '06:00', end: '23:00', closed: false },
         tuesday: { start: '06:00', end: '23:00', closed: false },
@@ -100,6 +117,13 @@ export function FacilityManagementPage() {
       photos: ['pilates1.jpg', 'pilates2.jpg', 'pilates3.jpg', 'pilates4.jpg'],
       membershipCards: ['membership3.jpg'],
       notice: '리뉴얼 공사로 인한 임시 휴업중입니다.',
+      currentPlans: {
+        isPartner: true,
+        operationSolutions: [],
+        revenueSolutions: [
+          { id: 'light', name: '라이트플랜', price: 1188000, billingType: 'yearly' }
+        ]
+      },
       operatingHours: {
         monday: { start: '09:00', end: '21:00', closed: true },
         tuesday: { start: '09:00', end: '21:00', closed: true },
@@ -615,7 +639,32 @@ function FacilityRegisterModal({ onClose }: { onClose: () => void }) {
 
 // 시설 상세보기 모달 컴포넌트
 function FacilityDetailModal({ facility, onClose }: { facility: any; onClose: () => void }) {
-  
+  const [currentPlans, setCurrentPlans] = useState(facility.currentPlans);
+
+  const handleCancelPlan = (planId: string, planType: 'operation' | 'revenue') => {
+    setCurrentPlans((prev: any) => {
+      const updated = { ...prev };
+      if (planType === 'operation') {
+        updated.operationSolutions = updated.operationSolutions.filter((plan: any) => plan.id !== planId);
+      } else {
+        updated.revenueSolutions = updated.revenueSolutions.filter((plan: any) => plan.id !== planId);
+      }
+      
+      // 매출솔루션이 모두 해지되면 비제휴가로 변경
+      if (updated.revenueSolutions.length === 0) {
+        updated.isPartner = false;
+      }
+      
+      return updated;
+    });
+  };
+
+  const getTotalAmount = () => {
+    const operationTotal = currentPlans.operationSolutions.reduce((sum: number, plan: any) => sum + plan.price, 0);
+    const revenueTotal = currentPlans.revenueSolutions.reduce((sum: number, plan: any) => sum + plan.price, 0);
+    return operationTotal + revenueTotal;
+  };
+
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content facility-detail-modal" onClick={(e) => e.stopPropagation()}>
@@ -625,6 +674,93 @@ function FacilityDetailModal({ facility, onClose }: { facility: any; onClose: ()
         </div>
 
         <div className="modal-body">
+          {/* 현재 진행중인 플랜 */}
+          <div className="form-section">
+            <h3 className="form-section-title">현재 진행중인 플랜</h3>
+            
+            <div className="partner-status-section">
+              <div className={`partner-badge ${currentPlans.isPartner ? 'partner' : 'non-partner'}`}>
+                {currentPlans.isPartner ? '🤝 제휴가 적용' : '🏢 비제휴가 적용'}
+              </div>
+            </div>
+
+            {/* 운영솔루션 */}
+            {currentPlans.operationSolutions.length > 0 && (
+              <div className="current-plans-section">
+                <h4 className="plans-category-title">운영솔루션</h4>
+                <div className="current-plans-list">
+                  {currentPlans.operationSolutions.map((plan: any) => (
+                    <div key={plan.id} className="current-plan-item">
+                      <div className="plan-info">
+                        <div className="plan-name">{plan.name}</div>
+                        <div className="plan-billing">
+                          {plan.billingType === 'yearly' ? '연간결제' : '월간결제'}
+                        </div>
+                      </div>
+                      <div className="plan-price-action">
+                        <div className="plan-price">
+                          {plan.price.toLocaleString()}원/{plan.billingType === 'yearly' ? '년' : '월'}
+                        </div>
+                        <button 
+                          className="btn-cancel"
+                          onClick={() => handleCancelPlan(plan.id, 'operation')}
+                        >
+                          해지
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* 매출솔루션 */}
+            {currentPlans.revenueSolutions.length > 0 && (
+              <div className="current-plans-section">
+                <h4 className="plans-category-title">매출솔루션</h4>
+                <div className="current-plans-list">
+                  {currentPlans.revenueSolutions.map((plan: any) => (
+                    <div key={plan.id} className="current-plan-item">
+                      <div className="plan-info">
+                        <div className="plan-name">{plan.name}</div>
+                        <div className="plan-billing">
+                          {plan.billingType === 'yearly' ? '연간결제' : '월간결제'}
+                        </div>
+                      </div>
+                      <div className="plan-price-action">
+                        <div className="plan-price">
+                          {plan.price.toLocaleString()}원/{plan.billingType === 'yearly' ? '년' : '월'}
+                        </div>
+                        <button 
+                          className="btn-cancel"
+                          onClick={() => handleCancelPlan(plan.id, 'revenue')}
+                        >
+                          해지
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* 총합 */}
+            {(currentPlans.operationSolutions.length > 0 || currentPlans.revenueSolutions.length > 0) && (
+              <div className="total-amount-section">
+                <div className="total-amount">
+                  <strong>총 결제금액: {getTotalAmount().toLocaleString()}원/년</strong>
+                </div>
+              </div>
+            )}
+
+            {/* 플랜이 없는 경우 */}
+            {currentPlans.operationSolutions.length === 0 && currentPlans.revenueSolutions.length === 0 && (
+              <div className="no-plans">
+                <p>현재 진행중인 플랜이 없습니다.</p>
+              </div>
+            )}
+          </div>
+
           {/* 연결된 사업자 정보 */}
           <div className="form-section">
             <h3 className="form-section-title">연결된 사업자</h3>
@@ -671,16 +807,6 @@ function FacilityDetailModal({ facility, onClose }: { facility: any; onClose: ()
                     {facility.status}
                   </span>
                 </div>
-              </div>
-
-              <div className="detail-item">
-                <label className="detail-label">회원 수</label>
-                <div className="detail-value">{facility.memberCount}명</div>
-              </div>
-
-              <div className="detail-item">
-                <label className="detail-label">이번 달 매출</label>
-                <div className="detail-value">{(facility.revenue / 10000).toLocaleString()}만원</div>
               </div>
             </div>
 
