@@ -252,6 +252,13 @@ export function PlanSelectionPage() {
                   // 다짐매니저는 항상 선택 가능, 다른 부가서비스는 다짐매니저 선택 후에만 선택 가능
                   const isDisabled = !isDagymManager && !isDagymManagerSelected;
 
+                  // 디버깅 정보 (개발 중에만)
+                  if (plan.id === 'manager') {
+                    console.log('다짐매니저:', { isSelected, isDagymManagerSelected });
+                  } else {
+                    console.log(`${plan.name}:`, { isSelected, isDisabled, isDagymManagerSelected });
+                  }
+
                   return (
                     <div 
                       key={plan.id} 
@@ -293,7 +300,7 @@ export function PlanSelectionPage() {
                           </span>
                         ) : (
                           <span className={`status-text ${isSelected ? 'selected' : ''}`}>
-                            {isSelected ? '✓ 선택됨' : '클릭하여 선택'}
+                            {isSelected ? '✅ 선택 완료' : '📋 클릭하여 선택'}
                           </span>
                         )}
                       </div>
@@ -364,10 +371,10 @@ export function PlanSelectionPage() {
 
                       <div className="plan-status">
                         {isRequired ? (
-                          <span className="status-text required">기본 포함</span>
+                          <span className="status-text required">🎯 기본 포함</span>
                         ) : (
                           <span className={`status-text ${isSelected ? 'selected' : ''}`}>
-                            {isSelected ? '✓ 선택됨' : '클릭하여 선택'}
+                            {isSelected ? '✅ 선택 완료' : '📋 클릭하여 선택'}
                           </span>
                         )}
                       </div>
