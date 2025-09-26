@@ -19,6 +19,10 @@ export function DashboardPage() {
     navigate(ROUTES.FACILITY_MANAGEMENT);
   };
 
+  const handleBusinessManagement = () => {
+    navigate(ROUTES.BUSINESS_MANAGEMENT);
+  };
+
   const handleLogout = () => {
     logout();
     navigate(ROUTES.LOGIN);
@@ -70,6 +74,18 @@ export function DashboardPage() {
                       <h3 className="action-title">새 계약서 작성</h3>
                       <p className="action-description">
                         새로운 계약서를 작성하고 고객에게 발송하세요
+                      </p>
+                    </div>
+                  </div>
+
+                  <div 
+                    className="action-card"
+                    onClick={handleBusinessManagement}
+                  >
+                    <div className="action-content">
+                      <h3 className="action-title">사업자관리</h3>
+                      <p className="action-description">
+                        등록된 사업자 정보를 확인하고 관리하세요
                       </p>
                     </div>
                   </div>

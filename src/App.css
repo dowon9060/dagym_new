@@ -2797,3 +2797,150 @@ body {
   opacity: 0.7;
   pointer-events: none;
 }
+
+/* ============================================= */
+/* 사업자관리 페이지 */
+/* ============================================= */
+.businesses-section {
+  margin-bottom: var(--space-8);
+}
+
+.businesses-table-container {
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.businesses-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.businesses-table th {
+  background: var(--bg-secondary);
+  padding: var(--space-4);
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border);
+  font-size: var(--text-sm);
+}
+
+.businesses-table td {
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+}
+
+.business-row {
+  transition: all var(--transition-normal);
+}
+
+.business-row:hover {
+  background: var(--bg-secondary);
+}
+
+.business-name {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.business-number {
+  font-family: 'Courier New', monospace;
+  color: var(--text-secondary);
+}
+
+.representative-name {
+  color: var(--text-primary);
+}
+
+.business-category {
+  color: var(--text-secondary);
+}
+
+.registration-date {
+  font-family: 'Courier New', monospace;
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+}
+
+.business-status {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.business-status.active {
+  background: rgba(34, 197, 94, 0.1);
+  color: rgb(34, 197, 94);
+}
+
+.business-status.inactive {
+  background: rgba(239, 68, 68, 0.1);
+  color: rgb(239, 68, 68);
+}
+
+.contract-count,
+.facility-count {
+  text-align: center;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+/* 사업자 상세보기 모달 */
+.business-detail-modal {
+  width: 90vw;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.business-detail-modal .detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.business-detail-modal .detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.business-detail-modal .detail-label {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.business-detail-modal .detail-value {
+  font-size: var(--text-base);
+  color: var(--text-primary);
+  word-break: break-word;
+}
+
+/* 뒤로가기 버튼 (사업자관리용) */
+.header-right .back-button {
+  padding: var(--space-2) var(--space-4);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  margin-right: var(--space-2);
+}
+
+.header-right .back-button:hover {
+  background: var(--border);
+  transform: translateY(-1px);
+}

@@ -18,6 +18,7 @@ export const ROUTES = {
   PAYMENT: '/contract/new/payment',
   STATISTICS: '/statistics',
   FACILITY_MANAGEMENT: '/facility',
+  BUSINESS_MANAGEMENT: '/business',
 } as const;
 
 // 은행 목록
