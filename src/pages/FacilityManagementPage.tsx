@@ -216,7 +216,7 @@ export function FacilityManagementPage() {
               <h2 className="section-title">시설 목록</h2>
               <button 
                 onClick={handleOpenRegisterModal}
-                className="btn-primary"
+                className="btn-primary btn-register-card"
               >
                 + 시설 등록
               </button>
@@ -230,12 +230,15 @@ export function FacilityManagementPage() {
                     <th>운영상태</th>
                     <th>회원 수</th>
                     <th>이번 달 매출</th>
-                    <th>관리</th>
                   </tr>
                 </thead>
                 <tbody>
                   {facilities.map((facility) => (
-                    <tr key={facility.id} className="facility-row">
+                    <tr 
+                      key={facility.id} 
+                      className="facility-row clickable-row"
+                      onClick={() => handleOpenDetailModal(facility)}
+                    >
                       <td className="facility-name">{facility.name}</td>
                       <td className="facility-type">{facility.type}</td>
                       <td>
@@ -245,15 +248,6 @@ export function FacilityManagementPage() {
                       </td>
                       <td className="facility-members">{facility.memberCount}명</td>
                       <td className="facility-revenue">{(facility.revenue / 10000).toLocaleString()}만원</td>
-                      <td className="facility-actions">
-                        <button 
-                          className="btn-outline btn-sm"
-                          onClick={() => handleOpenDetailModal(facility)}
-                        >
-                          상세보기
-                        </button>
-                        <button className="btn-outline btn-sm">관리</button>
-                      </td>
                     </tr>
                   ))}
                 </tbody>

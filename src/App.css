@@ -1024,11 +1024,21 @@ body {
 
 .facilities-table tbody tr {
   border-bottom: 1px solid var(--border-light);
-  transition: background-color var(--transition-fast);
+  transition: all var(--transition-fast);
 }
 
 .facilities-table tbody tr:hover {
   background: var(--bg-secondary);
+}
+
+.clickable-row {
+  cursor: pointer;
+}
+
+.clickable-row:hover {
+  background: var(--bg-secondary) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .facilities-table td {
@@ -1141,6 +1151,36 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--space-4);
+}
+
+/* 시설등록 라운드 카드 버튼 */
+.btn-register-card {
+  padding: var(--space-4) var(--space-6) !important;
+  font-size: calc(var(--text-base) * 1.2) !important;
+  font-weight: 600 !important;
+  border-radius: var(--radius-2xl) !important;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3), 0 2px 4px rgba(99, 102, 241, 0.2) !important;
+  transform: translateY(0);
+  transition: all var(--transition-normal) !important;
+  border: none !important;
+  background: linear-gradient(135deg, var(--primary), #5b5ff0) !important;
+  color: white !important;
+  min-width: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.btn-register-card:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4), 0 4px 12px rgba(99, 102, 241, 0.3) !important;
+  background: linear-gradient(135deg, #5b5ff0, var(--primary)) !important;
+}
+
+.btn-register-card:active {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3), 0 2px 4px rgba(99, 102, 241, 0.2) !important;
 }
 
 /* ============================================= */
