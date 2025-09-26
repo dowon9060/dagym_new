@@ -15,8 +15,12 @@ export function PlanSelectionPage() {
 
   // 기본 플랜 선택/해제 처리 (단일 선택)
   const handlePlanToggle = (planId: string, isSelected: boolean) => {
+    console.log('🔍 handlePlanToggle 호출:', { planId, isSelected, currentPlans: localSelectedPlans });
     const plan = PLANS.find(p => p.id === planId);
-    if (!plan) return;
+    if (!plan) {
+      console.log('❌ 플랜을 찾을 수 없습니다:', planId);
+      return;
+    }
 
     if (isSelected) {
       // 기본 플랜은 단일 선택이므로 기존 기본 플랜들을 모두 제거하고 새로운 플랜 추가
@@ -45,6 +49,7 @@ export function PlanSelectionPage() {
         price,
       };
 
+      console.log('✅ 기본 플랜 추가:', newPlan);
       setLocalSelectedPlans([...newPlans, newPlan]);
     } else {
       // 플랜 제거
@@ -52,10 +57,14 @@ export function PlanSelectionPage() {
     }
   };
 
-  // 부가 서비스 선택/해제 처리 (복수 선택) 
+  // 부가 서비스 선택/해제 처리 (복수 선택)
   const handleAddonPlanToggle = (planId: string, isSelected: boolean) => {
+    console.log('🔍 handleAddonPlanToggle 호출:', { planId, isSelected, currentPlans: localSelectedPlans });
     const plan = PLANS.find(p => p.id === planId);
-    if (!plan) return;
+    if (!plan) {
+      console.log('❌ 플랜을 찾을 수 없습니다:', planId);
+      return;
+    }
 
     if (isSelected) {
       // 플랜 추가
@@ -79,6 +88,7 @@ export function PlanSelectionPage() {
         price,
       };
 
+      console.log('✅ 부가 서비스 추가:', newPlan);
       setLocalSelectedPlans(prev => [...prev, newPlan]);
     } else {
       // 플랜 제거
@@ -325,12 +335,16 @@ export function PlanSelectionPage() {
                 </div>
                 {localSelectedPlans.map((plan: SelectedPlan) => (
                   <div key={plan.planId} className="selected-plan-item">
-                    <span className="plan-name">{plan.planName}</span>
-                    <span className="plan-price">{plan.price.toLocaleString()}원</span>
+                    <span className="plan-name">
+                      {plan.planName} ({billingType === 'yearly' ? '연간' : '월간'})
+                    </span>
+                    <span className="plan-price">
+                      {plan.price.toLocaleString()}원/{billingType === 'yearly' ? '년' : '월'}
+                    </span>
                   </div>
                 ))}
                 <div className="total-amount">
-                  <strong>총 합계: {totalAmount.toLocaleString()}원</strong>
+                  <strong>총 합계: {totalAmount.toLocaleString()}원 / {billingType === 'yearly' ? '년' : '월'}</strong>
                 </div>
               </div>
             ) : (
