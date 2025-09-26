@@ -303,17 +303,13 @@ export function PlanSelectionPage() {
                         )}
                       </div>
 
-                      <div className="plan-status">
-                        {isDisabled ? (
+                      {isDisabled && (
+                        <div className="plan-status">
                           <span className="status-text disabled">
                             ⚠️ 다짐매니저 선택 후 이용 가능
                           </span>
-                        ) : (
-                          <span className={`status-text ${isSelected ? 'selected' : ''}`}>
-                            {isSelected ? '✅ 선택 완료' : '📋 클릭하여 선택'}
-                          </span>
-                        )}
-                      </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })}
@@ -383,15 +379,11 @@ export function PlanSelectionPage() {
                         <span className="period">/ {billingType === 'yearly' ? '년' : '월'}</span>
                       </div>
 
-                      <div className="plan-status">
-                        {isRequired ? (
+                      {isRequired && (
+                        <div className="plan-status">
                           <span className="status-text required">🎯 기본 포함</span>
-                        ) : (
-                          <span className={`status-text ${isSelected ? 'selected' : ''}`}>
-                            {isSelected ? '✅ 선택 완료' : '📋 클릭하여 선택'}
-                          </span>
-                        )}
-                      </div>
+                        </div>
+                      )}
                     </div>
                   );
                 })}

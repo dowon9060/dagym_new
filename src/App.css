@@ -769,12 +769,13 @@ body {
   background: var(--bg-card);
   border: 2px solid var(--border-light);
   border-radius: var(--radius-xl);
-  padding: var(--space-6);
+  padding: var(--space-4);
   transition: all var(--transition-normal);
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-3);
   position: relative;
+  min-height: 120px;
 }
 
 .plan-card:hover {
@@ -896,7 +897,7 @@ body {
 .plan-price {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-1);
 }
 
 .price {
