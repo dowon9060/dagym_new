@@ -649,107 +649,168 @@ function BusinessDetailModal({ business, onClose }: { business: any; onClose: ()
             </div>
           </div>
 
-          {/* 계약 상태 및 관리 */}
+          {/* 계약 현황 및 관리 */}
           <div className="form-section">
-            <h2 className="section-title">계약 상태 및 관리</h2>
-            <div className="form-fields-vertical">
+            <h2 className="section-title">계약 현황</h2>
+            
+            {/* 계약 상태 카드 */}
+            <div className="contract-status-card">
+              <div className="contract-status-header">
+                <div className="status-indicator">
+                  <div className={`status-badge ${business.contractStatus === 'contracted' ? 'completed' : business.contractStatus === 'registered' ? 'pending' : 'none'}`}>
+                    <span className="status-icon">
+                      {business.contractStatus === 'contracted' ? '✅' : 
+                       business.contractStatus === 'registered' ? '📝' : 
+                       '⚪'}
+                    </span>
+                    <span className="status-text">
+                      {business.contractStatus === 'contracted' ? '계약완료' : 
+                       business.contractStatus === 'registered' ? '계약 진행중' : 
+                       '계약전'}
+                    </span>
+                  </div>
+                </div>
+                
+                {!isEditing && business.contractStatus !== 'contracted' && (
+                  <button
+                    type="button"
+                    onClick={handleResendContract}
+                    disabled={isSending}
+                    className="btn-contract-action"
+                  >
+                    {isSending ? (
+                      <>
+                        <span className="loading-spinner">⏳</span>
+                        발송중...
+                      </>
+                    ) : (
+                      <>
+                        <span className="action-icon">📤</span>
+                        계약서 재발송
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
+
+              {/* 계약 타임라인 */}
+              <div className="contract-timeline">
+                <div className="timeline-item">
+                  <div className="timeline-marker active">
+                    <span className="marker-icon">📋</span>
+                  </div>
+                  <div className="timeline-content">
+                    <div className="timeline-title">사업자 정보 등록</div>
+                    <div className="timeline-date">{formatDateTime(business.registrationDate)}</div>
+                  </div>
+                </div>
+
+                <div className="timeline-item">
+                  <div className={`timeline-marker ${business.lastSentDate ? 'active' : ''}`}>
+                    <span className="marker-icon">📤</span>
+                  </div>
+                  <div className="timeline-content">
+                    <div className="timeline-title">계약서 발송</div>
+                    <div className="timeline-date">
+                      {business.lastSentDate ? formatDateTime(business.lastSentDate) : '미발송'}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="timeline-item">
+                  <div className={`timeline-marker ${business.contractDate ? 'active' : ''}`}>
+                    <span className="marker-icon">✅</span>
+                  </div>
+                  <div className="timeline-content">
+                    <div className="timeline-title">계약 체결</div>
+                    <div className="timeline-date">
+                      {business.contractDate ? formatDateTime(business.contractDate) : '미완료'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 계약서 문서 관리 */}
+            <div className="contract-document-section">
+              <h3 className="subsection-title">계약서 문서</h3>
               
-              {/* 계약 상태 */}
-              <div className="form-group">
-                <label className="form-label">계약 상태</label>
-                <div className="contract-status-container">
-                  <span className={`contract-status ${business.contractStatus === 'contracted' ? 'completed' : business.contractStatus === 'registered' ? 'pending' : 'none'}`}>
-                    {business.contractStatus === 'contracted' ? '✅ 계약완료' : 
-                     business.contractStatus === 'registered' ? '⏳ 계약전' : 
-                     '❌ 미계약'}
-                  </span>
-                  {!isEditing && business.contractStatus !== 'contracted' && (
-                    <button
-                      type="button"
-                      onClick={handleResendContract}
-                      disabled={isSending}
-                      className="btn-resend"
-                    >
-                      {isSending ? '발송 중...' : '계약서 재발송'}
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              {/* 계약일시 */}
-              {business.contractDate && (
-                <div className="form-group">
-                  <label className="form-label">계약일시</label>
-                  <div className="input-field readonly">{formatDateTime(business.contractDate)}</div>
-                </div>
-              )}
-
-              {/* 마지막 발송일시 */}
-              <div className="form-group">
-                <label className="form-label">마지막 발송일시</label>
-                <div className="input-field readonly">{formatDateTime(business.lastSentDate)}</div>
-              </div>
-
-              {/* 계약서 PDF 관리 */}
-              <div className="form-group">
-                <label className="form-label">계약서 PDF</label>
-                <div className="contract-pdf-container">
-                  {business.contractPdfUrl ? (
-                    <div className="existing-pdf">
-                      <span className="pdf-info">📄 계약서 등록됨</span>
+              <div className="document-card">
+                {business.contractPdfUrl ? (
+                  <div className="document-exists">
+                    <div className="document-info">
+                      <div className="document-icon">📄</div>
+                      <div className="document-details">
+                        <div className="document-name">계약서.pdf</div>
+                        <div className="document-meta">등록된 계약서 문서</div>
+                      </div>
+                    </div>
+                    <div className="document-actions">
                       <button
                         type="button"
                         onClick={handleDownloadContract}
-                        className="btn-download"
+                        className="btn-document-action primary"
                       >
+                        <span className="action-icon">⬇️</span>
                         다운로드
                       </button>
                     </div>
-                  ) : (
-                    <span className="no-pdf">등록된 계약서가 없습니다</span>
-                  )}
-                  
-                  {isEditing && (
-                    <div className="pdf-upload">
-                      <input
-                        type="file"
-                        accept=".pdf"
-                        onChange={handleContractPdfUpload}
-                        className="file-input"
-                        id="contractPdf"
-                      />
-                      <label htmlFor="contractPdf" className="upload-label">
-                        {contractPdf ? contractPdf.name : '새 계약서 PDF 업로드'}
-                      </label>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* 임시 상태 변경 버튼 (개발/테스트용) */}
-              {!isEditing && (
-                <div className="form-group">
-                  <label className="form-label">상태 변경 (테스트용)</label>
-                  <div className="status-change-buttons">
-                    <button
-                      type="button"
-                      onClick={() => handleContractStatusChange('registered')}
-                      className="btn-status-change"
-                    >
-                      계약전으로 변경
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleContractStatusChange('contracted')}
-                      className="btn-status-change"
-                    >
-                      계약완료로 변경
-                    </button>
                   </div>
-                </div>
-              )}
-
+                ) : (
+                  <div className="document-empty">
+                    <div className="empty-icon">📄</div>
+                    <div className="empty-text">등록된 계약서가 없습니다</div>
+                    <div className="empty-desc">계약서 PDF 파일을 업로드해주세요</div>
+                  </div>
+                )}
+                
+                {isEditing && (
+                  <div className="document-upload">
+                    <input
+                      type="file"
+                      accept=".pdf"
+                      onChange={handleContractPdfUpload}
+                      className="file-input"
+                      id="contractPdf"
+                    />
+                    <label htmlFor="contractPdf" className="upload-zone">
+                      <div className="upload-icon">📁</div>
+                      <div className="upload-text">
+                        {contractPdf ? contractPdf.name : 'PDF 파일을 선택하거나 드래그하세요'}
+                      </div>
+                      <div className="upload-hint">최대 10MB, PDF 파일만 가능</div>
+                    </label>
+                  </div>
+                )}
+              </div>
             </div>
+
+            {/* 관리자 도구 (개발/테스트용) */}
+            {!isEditing && (
+              <div className="admin-tools">
+                <details className="admin-collapse">
+                  <summary className="admin-toggle">⚙️ 관리자 도구 (개발용)</summary>
+                  <div className="admin-content">
+                    <div className="admin-actions">
+                      <button
+                        type="button"
+                        onClick={() => handleContractStatusChange('registered')}
+                        className="btn-admin"
+                      >
+                        계약전으로 변경
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleContractStatusChange('contracted')}
+                        className="btn-admin"
+                      >
+                        계약완료로 변경
+                      </button>
+                    </div>
+                  </div>
+                </details>
+              </div>
+            )}
           </div>
 
           {/* 첨부 서류 */}

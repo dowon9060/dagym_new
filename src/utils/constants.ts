@@ -167,7 +167,7 @@ export const FILE_UPLOAD_CONFIG = {
 // 폼 단계
 export const FORM_STEPS = [
   { id: 1, name: '사업자 정보', path: ROUTES.BUSINESS_INFO },
-  { id: 2, name: '정산 계좌', path: ROUTES.ACCOUNT_INFO },
+  { id: 2, name: '결제 정보', path: ROUTES.ACCOUNT_INFO },
   { id: 3, name: '대표자 정보', path: ROUTES.REPRESENTATIVE_INFO },
   { id: 4, name: '플랜 선택', path: ROUTES.PLAN_SELECTION },
   { id: 5, name: '결제', path: ROUTES.PAYMENT },

@@ -2576,154 +2576,427 @@ body {
   font-family: 'Courier New', monospace;
 }
 
-/* 계약 상태 및 관리 스타일 */
-.contract-status-container {
+/* 계약 현황 관리 (새로운 디자인) */
+.contract-status-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  margin-bottom: var(--space-4);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+}
+
+.contract-status-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.contract-status-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-6);
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+}
+
+.status-badge {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  font-size: var(--text-base);
+  box-shadow: var(--shadow-sm);
+}
+
+.status-badge.completed {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+
+.status-badge.pending {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.status-badge.none {
+  background: var(--bg-secondary);
+  color: var(--text-muted);
+  border: 2px solid var(--border-light);
+}
+
+.status-icon {
+  font-size: var(--text-lg);
+}
+
+.btn-contract-action {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: white;
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-contract-action:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-contract-action:disabled {
+  background: var(--bg-muted);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 계약 타임라인 */
+.contract-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  position: relative;
+  padding-left: var(--space-6);
+}
+
+.contract-timeline::before {
+  content: '';
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  bottom: 20px;
+  width: 3px;
+  background: linear-gradient(to bottom, var(--primary), var(--border-light));
+  border-radius: var(--radius-full);
+}
+
+.timeline-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  position: relative;
+}
+
+.timeline-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  border: 3px solid var(--border-light);
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  transition: all var(--transition-normal);
+}
+
+.timeline-marker.active {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  border-color: var(--primary);
+  color: white;
+  box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.1);
+  transform: scale(1.1);
+}
+
+.marker-icon {
+  font-size: var(--text-lg);
+}
+
+.timeline-content {
+  flex: 1;
+  padding-top: var(--space-2);
+}
+
+.timeline-title {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-1);
+  font-size: var(--text-base);
+}
+
+.timeline-date {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  font-family: 'Courier New', monospace;
+}
+
+/* 계약서 문서 관리 */
+.contract-document-section {
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-light);
+}
+
+.subsection-title {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.subsection-title::before {
+  content: '📄';
+  font-size: var(--text-xl);
+}
+
+.document-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  padding: var(--space-5);
+  transition: all var(--transition-normal);
+}
+
+.document-card:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+.document-exists {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.document-info {
   display: flex;
   align-items: center;
   gap: var(--space-4);
-  flex-wrap: wrap;
 }
 
-.contract-status {
-  padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-full);
-  font-size: var(--text-sm);
+.document-icon {
+  font-size: var(--text-3xl);
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.document-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.document-name {
   font-weight: 600;
-  border: 2px solid;
+  color: var(--text-primary);
+  font-size: var(--text-base);
 }
 
-.contract-status.completed {
-  color: var(--success);
-  background: rgba(34, 197, 94, 0.1);
+.document-meta {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+.document-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.btn-document-action {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-document-action.primary {
+  background: linear-gradient(135deg, var(--success), var(--success-dark));
+  color: white;
   border-color: var(--success);
 }
 
-.contract-status.pending {
-  color: var(--warning);
-  background: rgba(245, 158, 11, 0.1);
-  border-color: var(--warning);
+.btn-document-action:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
-.contract-status.none {
-  color: var(--error);
-  background: rgba(239, 68, 68, 0.1);
-  border-color: var(--error);
+.btn-document-action.primary:hover {
+  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.3);
 }
 
-.btn-resend {
+.document-empty {
+  text-align: center;
+  padding: var(--space-8);
+  color: var(--text-muted);
+}
+
+.empty-icon {
+  font-size: var(--text-5xl);
+  margin-bottom: var(--space-3);
+  opacity: 0.5;
+}
+
+.empty-text {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  margin-bottom: var(--space-2);
+  color: var(--text-primary);
+}
+
+.empty-desc {
+  font-size: var(--text-sm);
+  opacity: 0.8;
+}
+
+.document-upload {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-light);
+}
+
+.upload-zone {
+  display: block;
+  padding: var(--space-8);
+  background: var(--bg-card);
+  border: 3px dashed var(--border-light);
+  border-radius: var(--radius-xl);
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.upload-zone:hover {
+  border-color: var(--primary);
+  background: var(--bg-tertiary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+.upload-icon {
+  font-size: var(--text-3xl);
+  margin-bottom: var(--space-3);
+  color: var(--text-muted);
+}
+
+.upload-text {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+  font-size: var(--text-base);
+}
+
+.upload-hint {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+}
+
+/* 관리자 도구 */
+.admin-tools {
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-light);
+}
+
+.admin-collapse {
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+  overflow: hidden;
+  transition: all var(--transition-normal);
+}
+
+.admin-collapse:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-toggle {
+  padding: var(--space-4);
+  cursor: pointer;
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  list-style: none;
+  user-select: none;
+  transition: all var(--transition-normal);
+  background: var(--bg-secondary);
+}
+
+.admin-toggle:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.admin-toggle::-webkit-details-marker {
+  display: none;
+}
+
+.admin-content {
+  border-top: 1px solid var(--border-light);
+  padding: var(--space-4);
+  background: var(--bg-card);
+}
+
+.admin-actions {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.btn-admin {
   padding: var(--space-2) var(--space-4);
-  background: var(--primary);
-  color: white;
-  border: none;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 2px solid var(--border-light);
   border-radius: var(--radius-md);
   font-size: var(--text-sm);
   font-weight: 500;
   cursor: pointer;
   transition: all var(--transition-normal);
+  box-shadow: var(--shadow-sm);
 }
 
-.btn-resend:hover:not(:disabled) {
-  background: var(--primary-dark);
-  transform: translateY(-1px);
-}
-
-.btn-resend:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.contract-pdf-container {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-}
-
-.existing-pdf {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3);
-  background: var(--bg-secondary);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-light);
-}
-
-.pdf-info {
-  color: var(--text-primary);
-  font-size: var(--text-sm);
-}
-
-.no-pdf {
-  color: var(--text-muted);
-  font-size: var(--text-sm);
-  font-style: italic;
-}
-
-.btn-download {
-  padding: var(--space-1) var(--space-3);
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
-  border: 1px solid var(--border-medium);
-  border-radius: var(--radius-sm);
-  font-size: var(--text-xs);
-  cursor: pointer;
-  transition: all var(--transition-normal);
-}
-
-.btn-download:hover {
-  background: var(--bg-card);
-  border-color: var(--primary);
-  color: var(--primary);
-}
-
-.pdf-upload {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.pdf-upload .file-input {
-  display: none;
-}
-
-.upload-label {
-  padding: var(--space-2) var(--space-4);
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-  border: 2px dashed var(--border-light);
-  border-radius: var(--radius-md);
-  font-size: var(--text-sm);
-  cursor: pointer;
-  transition: all var(--transition-normal);
-}
-
-.upload-label:hover {
-  border-color: var(--primary);
-  background: var(--bg-tertiary);
-}
-
-.status-change-buttons {
-  display: flex;
-  gap: var(--space-2);
-  flex-wrap: wrap;
-}
-
-.btn-status-change {
-  padding: var(--space-2) var(--space-3);
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-  border: 1px solid var(--border-medium);
-  border-radius: var(--radius-sm);
-  font-size: var(--text-xs);
-  cursor: pointer;
-  transition: all var(--transition-normal);
-}
-
-.btn-status-change:hover {
+.btn-admin:hover {
   background: var(--warning);
   color: white;
   border-color: var(--warning);
+  transform: translateY(-1px);
 }
 
 /* ============================================= */
