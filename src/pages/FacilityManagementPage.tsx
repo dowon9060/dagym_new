@@ -86,7 +86,7 @@ export function FacilityManagementPage() {
           {/* 요약 통계 */}
           <section className="stats-section">
             <h2 className="section-title">시설 현황</h2>
-            <div className="stats-cards">
+            <div className="stats-grid">
               <div className="stat-card">
                 <div className="stat-content">
                   <div className="stat-number">{facilities.length}</div>
