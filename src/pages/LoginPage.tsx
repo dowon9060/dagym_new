@@ -41,8 +41,8 @@ export function LoginPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="login-form">
-            <div className="form-group">
-              <label htmlFor="email" className="form-label">
+            <div className="login-form-group">
+              <label htmlFor="email" className="login-form-label">
                 이메일
               </label>
               <input
@@ -50,15 +50,15 @@ export function LoginPage() {
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="form-input"
+                className="login-input-field"
                 placeholder="이메일을 입력하세요"
                 required
                 disabled={isLoading}
               />
             </div>
 
-            <div className="form-group">
-              <label htmlFor="password" className="form-label">
+            <div className="login-form-group">
+              <label htmlFor="password" className="login-form-label">
                 비밀번호
               </label>
               <input
@@ -66,7 +66,7 @@ export function LoginPage() {
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="form-input"
+                className="login-input-field"
                 placeholder="비밀번호를 입력하세요"
                 required
                 disabled={isLoading}
@@ -74,14 +74,14 @@ export function LoginPage() {
             </div>
 
             {error && (
-              <div className="error-message">
+              <div className="login-error-message">
                 {error}
               </div>
             )}
 
             <button
               type="submit"
-              className="login-button"
+              className="login-submit-button"
               disabled={isLoading || !email || !password}
             >
               {isLoading ? '로그인 중...' : '로그인'}

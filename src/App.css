@@ -2377,17 +2377,17 @@ body {
 
 .login-container {
   width: 100%;
-  max-width: 400px;
+  max-width: 480px;
   background: var(--bg-card);
-  border-radius: var(--radius-2xl);
+  border-radius: 32px; /* 더 라운드한 카드 */
   box-shadow: var(--shadow-xl);
-  padding: var(--space-8);
+  padding: var(--space-10);
   border: 1px solid var(--border-light);
 }
 
 .login-title {
   text-align: center;
-  font-size: var(--text-3xl);
+  font-size: var(--text-4xl);
   font-weight: 700;
   color: var(--text-primary);
   margin-bottom: var(--space-2);
@@ -2395,15 +2395,137 @@ body {
 
 .login-subtitle {
   text-align: center;
-  font-size: var(--text-base);
+  font-size: var(--text-lg);
   color: var(--text-muted);
-  margin-bottom: var(--space-8);
+  margin-bottom: var(--space-10);
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-8);
+}
+
+/* 로그인 폼 그룹 */
+.login-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* 로그인 폼 라벨 */
+.login-form-label {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+/* 로그인 입력 필드 (크기 증가) */
+.login-input-field {
+  width: 100%;
+  padding: var(--space-4) var(--space-6); /* 더 큰 패딩 */
+  font-size: var(--text-lg); /* 더 큰 폰트 */
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-xl); /* 라운드 */
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  transition: all var(--transition-normal);
+  min-height: 56px; /* 최소 높이 설정 */
+}
+
+.login-input-field:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: var(--bg-card);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.login-input-field:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.login-input-field::placeholder {
+  color: var(--text-muted);
+  font-size: var(--text-base);
+}
+
+/* 로그인 버튼 (크기 증가) */
+.login-submit-button {
+  width: 100%;
+  padding: var(--space-4) var(--space-6); /* 더 큰 패딩 */
+  font-size: var(--text-xl); /* 더 큰 폰트 */
+  font-weight: 600;
+  color: white;
+  background: var(--primary);
+  border: none;
+  border-radius: var(--radius-xl); /* 라운드 */
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  min-height: 60px; /* 최소 높이 설정 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+  margin-top: var(--space-4);
+}
+
+.login-submit-button:hover:not(:disabled) {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.login-submit-button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--shadow-md);
+}
+
+.login-submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: var(--shadow-sm);
+}
+
+/* 로그인 에러 메시지 */
+.login-error-message {
+  padding: var(--space-3) var(--space-4);
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: var(--radius-lg);
+  color: var(--error);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
+/* 로그인 푸터 */
+.login-footer {
+  margin-top: var(--space-8);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--border-light);
+}
+
+.demo-info {
+  text-align: center;
+  padding: var(--space-4);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+}
+
+.demo-info h3 {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
+}
+
+.demo-info p {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin: var(--space-1) 0;
+  font-family: 'Courier New', monospace;
 }
 
 /* ============================================= */
@@ -2851,6 +2973,20 @@ body {
   
   .login-container {
     padding: var(--space-6);
+    max-width: 360px;
+    border-radius: 24px;
+  }
+  
+  .login-input-field {
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-base);
+    min-height: 48px;
+  }
+  
+  .login-submit-button {
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-lg);
+    min-height: 52px;
   }
   
   .form-section {
