@@ -5,7 +5,24 @@ import { useContract } from '../context/ContractContext';
 import { FileUpload } from '../components/FileUpload';
 import { StepNavigation } from '../components/StepNavigation';
 import { BusinessInfo } from '../types';
-import { ROUTES, BUSINESS_TYPES } from '../utils/constants';
+import { ROUTES } from '../utils/constants';
+
+// Daum Postcode API 타입 선언
+declare global {
+  interface Window {
+    daum: {
+      Postcode: new (options: {
+        oncomplete: (data: {
+          roadAddress: string;
+          jibunAddress: string;
+          zonecode: string;
+        }) => void;
+      }) => {
+        open: () => void;
+      };
+    };
+  }
+}
 
 export function BusinessInfoPage() {
   const navigate = useNavigate();
@@ -19,6 +36,7 @@ export function BusinessInfoPage() {
     handleSubmit,
     formState: { errors, isValid },
     watch,
+    setValue,
   } = useForm<BusinessInfo>({
     defaultValues: state.businessInfo,
     mode: 'onChange',
@@ -74,7 +92,7 @@ export function BusinessInfoPage() {
           <div className="form-section">
             <h2 className="section-title">기본 정보</h2>
             
-            <div className="form-grid">
+            <div className="form-fields-vertical">
               {/* 사업자명 */}
               <div className="form-group">
                 <label htmlFor="businessName" className="form-label">
@@ -90,11 +108,11 @@ export function BusinessInfoPage() {
                       message: '사업자명은 2글자 이상이어야 합니다'
                     }
                   })}
-                  className={`form-input ${errors.businessName ? 'error' : ''}`}
+                  className={`input-field ${errors.businessName ? 'error' : ''}`}
                   placeholder="사업자명을 입력하세요"
                 />
                 {errors.businessName && (
-                  <span className="error-text">{errors.businessName.message}</span>
+                  <span className="error-message">{errors.businessName.message}</span>
                 )}
               </div>
 
@@ -113,11 +131,11 @@ export function BusinessInfoPage() {
                       message: '올바른 사업자등록번호 형식이 아닙니다 (000-00-00000)'
                     }
                   })}
-                  className={`form-input ${errors.businessNumber ? 'error' : ''}`}
+                  className={`input-field ${errors.businessNumber ? 'error' : ''}`}
                   placeholder="000-00-00000"
                 />
                 {errors.businessNumber && (
-                  <span className="error-text">{errors.businessNumber.message}</span>
+                  <span className="error-message">{errors.businessNumber.message}</span>
                 )}
               </div>
 
@@ -136,11 +154,11 @@ export function BusinessInfoPage() {
                       message: '대표자명은 2글자 이상이어야 합니다'
                     }
                   })}
-                  className={`form-input ${errors.representativeName ? 'error' : ''}`}
+                  className={`input-field ${errors.representativeName ? 'error' : ''}`}
                   placeholder="대표자명을 입력하세요"
                 />
                 {errors.representativeName && (
-                  <span className="error-text">{errors.representativeName.message}</span>
+                  <span className="error-message">{errors.representativeName.message}</span>
                 )}
               </div>
 
@@ -149,22 +167,17 @@ export function BusinessInfoPage() {
                 <label htmlFor="businessType" className="form-label">
                   업태 <span className="required">*</span>
                 </label>
-                <select
+                <input
+                  type="text"
                   id="businessType"
                   {...register('businessType', {
-                    required: '업태를 선택해주세요'
+                    required: '업태를 입력해주세요'
                   })}
-                  className={`form-select ${errors.businessType ? 'error' : ''}`}
-                >
-                  <option value="">업태를 선택하세요</option>
-                  {BUSINESS_TYPES.map((type) => (
-                    <option key={type} value={type}>
-                      {type}
-                    </option>
-                  ))}
-                </select>
+                  className={`input-field ${errors.businessType ? 'error' : ''}`}
+                  placeholder="예: 체육시설업, 서비스업, 도매업 등"
+                />
                 {errors.businessType && (
-                  <span className="error-text">{errors.businessType.message}</span>
+                  <span className="error-message">{errors.businessType.message}</span>
                 )}
               </div>
 
@@ -179,32 +192,51 @@ export function BusinessInfoPage() {
                   {...register('businessCategory', {
                     required: '종목을 입력해주세요'
                   })}
-                  className={`form-input ${errors.businessCategory ? 'error' : ''}`}
+                  className={`input-field ${errors.businessCategory ? 'error' : ''}`}
                   placeholder="예: 체육시설 운영업"
                 />
                 {errors.businessCategory && (
-                  <span className="error-text">{errors.businessCategory.message}</span>
+                  <span className="error-message">{errors.businessCategory.message}</span>
                 )}
               </div>
-            </div>
 
-            {/* 사업자 주소 */}
-            <div className="form-group full-width">
-              <label htmlFor="businessAddress" className="form-label">
-                사업자 주소 <span className="required">*</span>
-              </label>
-              <textarea
-                id="businessAddress"
-                {...register('businessAddress', {
-                  required: '사업자 주소를 입력해주세요'
-                })}
-                className={`form-textarea ${errors.businessAddress ? 'error' : ''}`}
-                placeholder="사업자 주소를 입력하세요"
-                rows={3}
-              />
-              {errors.businessAddress && (
-                <span className="error-text">{errors.businessAddress.message}</span>
-              )}
+              {/* 사업자 주소 */}
+              <div className="form-group">
+                <label htmlFor="businessAddress" className="form-label">
+                  사업자 주소 <span className="required">*</span>
+                </label>
+                <div className="address-input-container">
+                  <input
+                    type="text"
+                    id="businessAddress"
+                    {...register('businessAddress', {
+                      required: '사업자 주소를 입력해주세요'
+                    })}
+                    className={`input-field ${errors.businessAddress ? 'error' : ''}`}
+                    placeholder="주소 검색 버튼을 클릭하세요"
+                    readOnly
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      // Daum 우편번호 서비스 팝업 호출
+                      new window.daum.Postcode({
+                        oncomplete: function(data) {
+                          // 선택된 주소 정보를 React Hook Form에 설정
+                          const fullAddress = data.roadAddress || data.jibunAddress;
+                          setValue('businessAddress', fullAddress, { shouldValidate: true });
+                        }
+                      }).open();
+                    }}
+                    className="address-search-btn"
+                  >
+                    🔍 주소 검색
+                  </button>
+                </div>
+                {errors.businessAddress && (
+                  <span className="error-message">{errors.businessAddress.message}</span>
+                )}
+              </div>
             </div>
           </div>
 
@@ -212,9 +244,9 @@ export function BusinessInfoPage() {
           <div className="form-section">
             <h2 className="section-title">첨부 서류</h2>
             
-            <div className="upload-grid">
+            <div className="form-fields-vertical">
               {/* 사업자등록증 */}
-              <div className="upload-group">
+              <div className="form-group">
                 <FileUpload
                   label="사업자등록증"
                   onFileSelect={setBusinessRegistrationCert}
@@ -224,7 +256,7 @@ export function BusinessInfoPage() {
               </div>
 
               {/* 체육시설업 신고증 */}
-              <div className="upload-group">
+              <div className="form-group">
                 <FileUpload
                   label="체육시설업 신고증"
                   onFileSelect={setSportsLicenseCert}

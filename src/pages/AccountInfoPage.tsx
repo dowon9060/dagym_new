@@ -87,7 +87,7 @@ export function AccountInfoPage() {
           <div className="form-section">
             <h2 className="section-title">계좌 정보</h2>
             
-            <div className="form-grid">
+            <div className="form-fields-vertical">
               {/* 은행명 */}
               <div className="form-group">
                 <label htmlFor="bankName" className="form-label">
@@ -98,7 +98,7 @@ export function AccountInfoPage() {
                   {...register('bankName', {
                     required: '은행을 선택해주세요'
                   })}
-                  className={`form-select ${errors.bankName ? 'error' : ''}`}
+                  className={`select-field ${errors.bankName ? 'error' : ''}`}
                 >
                   <option value="">은행을 선택하세요</option>
                   {BANKS.map((bank) => (
@@ -108,7 +108,7 @@ export function AccountInfoPage() {
                   ))}
                 </select>
                 {errors.bankName && (
-                  <span className="error-text">{errors.bankName.message}</span>
+                  <span className="error-message">{errors.bankName.message}</span>
                 )}
               </div>
 
@@ -131,7 +131,7 @@ export function AccountInfoPage() {
                       message: '계좌번호는 최소 10자리 이상이어야 합니다'
                     }
                   })}
-                  className={`form-input ${errors.accountNumber ? 'error' : ''}`}
+                  className={`input-field ${errors.accountNumber ? 'error' : ''}`}
                   placeholder="1234-567-890123"
                   onChange={(e) => {
                     const formatted = formatAccountNumber(e.target.value);
@@ -139,12 +139,12 @@ export function AccountInfoPage() {
                   }}
                 />
                 {errors.accountNumber && (
-                  <span className="error-text">{errors.accountNumber.message}</span>
+                  <span className="error-message">{errors.accountNumber.message}</span>
                 )}
               </div>
 
               {/* 예금주 */}
-              <div className="form-group full-width">
+              <div className="form-group">
                 <label htmlFor="accountHolder" className="form-label">
                   예금주 <span className="required">*</span>
                 </label>
@@ -158,11 +158,11 @@ export function AccountInfoPage() {
                       message: '예금주명은 2글자 이상이어야 합니다'
                     }
                   })}
-                  className={`form-input ${errors.accountHolder ? 'error' : ''}`}
+                  className={`input-field ${errors.accountHolder ? 'error' : ''}`}
                   placeholder="예금주명을 입력하세요"
                 />
                 {errors.accountHolder && (
-                  <span className="error-text">{errors.accountHolder.message}</span>
+                  <span className="error-message">{errors.accountHolder.message}</span>
                 )}
               </div>
             </div>
@@ -172,8 +172,8 @@ export function AccountInfoPage() {
           <div className="form-section">
             <h2 className="section-title">첨부 서류</h2>
             
-            <div className="upload-grid">
-              <div className="upload-group">
+            <div className="form-fields-vertical">
+              <div className="form-group">
                 <FileUpload
                   label="통장 사진"
                   onFileSelect={setBankbookPhoto}

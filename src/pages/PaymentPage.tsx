@@ -277,126 +277,135 @@ export function PaymentPage() {
             작성된 계약서를 고객에게 발송합니다
           </p>
         
-        <div className="payment-summary">
-          <h3>계약 요약</h3>
-          <div className="summary-content">
-            <div className="business-name">{state.businessInfo.businessName}</div>
-            <div className="plans-summary">
-              {state.selectedPlans.map((plan, index) => (
-                <div key={index} className="plan-summary">
-                  {plan.planName} ({plan.billingType === 'monthly' ? '월간' : '연간'}): {formatAmount(plan.price)}
-                </div>
-              ))}
-            </div>
-            <div className="total-amount">
-              총 계약금액: <strong>{formatAmount(getTotalAmount())}</strong>
+        <div className="form-section">
+          <h2 className="section-title">계약 요약</h2>
+          <div className="payment-summary">
+            <div className="summary-content">
+              <div className="business-name">{state.businessInfo.businessName}</div>
+              <div className="plans-summary">
+                {state.selectedPlans.map((plan, index) => (
+                  <div key={index} className="plan-summary">
+                    {plan.planName} ({plan.billingType === 'monthly' ? '월간' : '연간'}): {formatAmount(plan.price)}
+                  </div>
+                ))}
+              </div>
+              <div className="total-amount">
+                총 계약금액: <strong>{formatAmount(getTotalAmount())}</strong>
+              </div>
             </div>
           </div>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="payment-form">
           <div className="form-section">
-            <h4>고객 연락처 정보</h4>
+            <h2 className="section-title">고객 연락처 정보</h2>
             
-            <div className="form-group">
-              <label htmlFor="clientName" className="form-label">
-                고객명 <span className="required">*</span>
-              </label>
-              <input
-                type="text"
-                id="clientName"
-                className="input-field"
-                {...register('clientName', { 
-                  required: '고객명은 필수입니다.' 
-                })}
-              />
-              {errors.clientName && (
-                <p className="error-message">{errors.clientName.message}</p>
-              )}
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="clientPhone" className="form-label">
-                휴대폰 번호 <span className="required">*</span>
-              </label>
-              <input
-                type="tel"
-                id="clientPhone"
-                className="input-field"
-                placeholder="010-0000-0000"
-                {...register('clientPhone', {
-                  required: '휴대폰 번호는 필수입니다.',
-                  pattern: {
-                    value: /^010-\d{4}-\d{4}$/,
-                    message: '올바른 휴대폰 번호 형식이 아닙니다. (010-0000-0000)',
-                  },
-                })}
-              />
-              {errors.clientPhone && (
-                <p className="error-message">{errors.clientPhone.message}</p>
-              )}
-            </div>
-
-            <div className="form-group">
-              <label htmlFor="sendMethod" className="form-label">
-                발송 방법 <span className="required">*</span>
-              </label>
-              <select
-                id="sendMethod"
-                className="select-field"
-                {...register('sendMethod', { required: '발송 방법을 선택해주세요.' })}
-              >
-                {SEND_METHODS.map((method) => (
-                  <option key={method.value} value={method.value}>
-                    {method.label}
-                  </option>
-                ))}
-              </select>
-              {errors.sendMethod && (
-                <p className="error-message">{errors.sendMethod.message}</p>
-              )}
-            </div>
-
-            {(selectedSendMethod === 'email' || selectedSendMethod === 'kakao') && (
+            <div className="form-fields-vertical">
               <div className="form-group">
-                <label htmlFor="clientEmail" className="form-label">
-                  이메일 주소 {selectedSendMethod === 'email' && <span className="required">*</span>}
+                <label htmlFor="clientName" className="form-label">
+                  고객명 <span className="required">*</span>
                 </label>
                 <input
-                  type="email"
-                  id="clientEmail"
+                  type="text"
+                  id="clientName"
                   className="input-field"
-                  placeholder="example@example.com"
-                  {...register('clientEmail', {
-                    required: selectedSendMethod === 'email' ? '이메일 주소는 필수입니다.' : false,
+                  {...register('clientName', { 
+                    required: '고객명은 필수입니다.' 
+                  })}
+                />
+                {errors.clientName && (
+                  <span className="error-message">{errors.clientName.message}</span>
+                )}
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="clientPhone" className="form-label">
+                  휴대폰 번호 <span className="required">*</span>
+                </label>
+                <input
+                  type="tel"
+                  id="clientPhone"
+                  className="input-field"
+                  placeholder="010-0000-0000"
+                  {...register('clientPhone', {
+                    required: '휴대폰 번호는 필수입니다.',
                     pattern: {
-                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                      message: '올바른 이메일 형식이 아닙니다.',
+                      value: /^010-\d{4}-\d{4}$/,
+                      message: '올바른 휴대폰 번호 형식이 아닙니다. (010-0000-0000)',
                     },
                   })}
                 />
-                {errors.clientEmail && (
-                  <p className="error-message">{errors.clientEmail.message}</p>
+                {errors.clientPhone && (
+                  <span className="error-message">{errors.clientPhone.message}</span>
                 )}
               </div>
-            )}
+
+              <div className="form-group">
+                <label htmlFor="sendMethod" className="form-label">
+                  발송 방법 <span className="required">*</span>
+                </label>
+                <select
+                  id="sendMethod"
+                  className="select-field"
+                  {...register('sendMethod', { required: '발송 방법을 선택해주세요.' })}
+                >
+                  {SEND_METHODS.map((method) => (
+                    <option key={method.value} value={method.value}>
+                      {method.label}
+                    </option>
+                  ))}
+                </select>
+                {errors.sendMethod && (
+                  <span className="error-message">{errors.sendMethod.message}</span>
+                )}
+              </div>
+
+              {(selectedSendMethod === 'email' || selectedSendMethod === 'kakao') && (
+                <div className="form-group">
+                  <label htmlFor="clientEmail" className="form-label">
+                    이메일 주소 {selectedSendMethod === 'email' && <span className="required">*</span>}
+                  </label>
+                  <input
+                    type="email"
+                    id="clientEmail"
+                    className="input-field"
+                    placeholder="example@example.com"
+                    {...register('clientEmail', {
+                      required: selectedSendMethod === 'email' ? '이메일 주소는 필수입니다.' : false,
+                      pattern: {
+                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                        message: '올바른 이메일 형식이 아닙니다.',
+                      },
+                    })}
+                  />
+                  {errors.clientEmail && (
+                    <span className="error-message">{errors.clientEmail.message}</span>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="form-section">
-            <div className="checkbox-group">
-              <input
-                type="checkbox"
-                id="agreeTerms"
-                {...register('agreeTerms', { 
-                  required: '이용약관에 동의해주세요.' 
-                })}
-              />
-              <label htmlFor="agreeTerms">
-                <strong>개인정보 처리방침 및 이용약관</strong>에 동의합니다.
-              </label>
-              {errors.agreeTerms && (
-                <p className="error-message">{errors.agreeTerms.message}</p>
-              )}
+            <h2 className="section-title">약관 동의</h2>
+            <div className="form-fields-vertical">
+              <div className="form-group">
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    className="checkbox-field"
+                    id="agreeTerms"
+                    {...register('agreeTerms', { 
+                      required: '이용약관에 동의해주세요.' 
+                    })}
+                  />
+                  <span className="checkbox-custom"></span>
+                  <strong>개인정보 처리방침 및 이용약관</strong>에 동의합니다. <span className="required">*</span>
+                </label>
+                {errors.agreeTerms && (
+                  <span className="error-message">{errors.agreeTerms.message}</span>
+                )}
+              </div>
             </div>
           </div>
 
@@ -404,14 +413,14 @@ export function PaymentPage() {
             <button
               type="button"
               onClick={() => handleStepClick(4)}
-              className="prev-button"
+              className="btn-secondary"
               disabled={isSubmitting}
             >
-              이전
+              이전 단계
             </button>
             <button
               type="submit"
-              className="next-button"
+              className="btn-primary"
               disabled={!isValid || isSubmitting}
             >
               {isSubmitting ? '생성 중...' : '계약서 생성'}

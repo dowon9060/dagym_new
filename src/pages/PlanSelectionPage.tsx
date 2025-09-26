@@ -160,61 +160,66 @@ export function PlanSelectionPage() {
           </p>
 
         {/* 옵션 설정 */}
-        <div className="plan-options">
-          <div className="billing-type">
-            <label className="option-label">과금 주기</label>
-            <div className="radio-group">
-              <label className="radio-label">
-                <input
-                  type="radio"
-                  value="monthly"
-                  checked={billingType === 'monthly'}
-                  onChange={(e) => setBillingType(e.target.value as 'monthly')}
-                />
-                <span>월간</span>
-              </label>
-              <label className="radio-label">
-                <input
-                  type="radio"
-                  value="yearly"
-                  checked={billingType === 'yearly'}
-                  onChange={(e) => setBillingType(e.target.value as 'yearly')}
-                />
-                <span>연간 (할인)</span>
-              </label>
+        <div className="form-section">
+          <h2 className="section-title">설정 옵션</h2>
+          <div className="plan-options">
+            <div className="billing-type">
+              <label className="option-label">과금 주기</label>
+              <div className="radio-group">
+                <label className="radio-button">
+                  <input
+                    type="radio"
+                    value="monthly"
+                    checked={billingType === 'monthly'}
+                    onChange={(e) => setBillingType(e.target.value as 'monthly')}
+                  />
+                  월간
+                </label>
+                <label className="radio-button">
+                  <input
+                    type="radio"
+                    value="yearly"
+                    checked={billingType === 'yearly'}
+                    onChange={(e) => setBillingType(e.target.value as 'yearly')}
+                  />
+                  연간 (할인)
+                </label>
+              </div>
             </div>
-          </div>
 
-          <div className="partner-type">
-            <label className="option-label">제휴 여부</label>
-            <div className="radio-group">
-              <label className="radio-label">
-                <input
-                  type="radio"
-                  value="non-partner"
-                  checked={!isPartner}
-                  onChange={() => setIsPartner(false)}
-                />
-                <span>비제휴가</span>
-              </label>
-              <label className="radio-label">
-                <input
-                  type="radio"
-                  value="partner"
-                  checked={isPartner}
-                  onChange={() => setIsPartner(true)}
-                />
-                <span>제휴가</span>
-              </label>
+            <div className="partner-type">
+              <label className="option-label">제휴 여부</label>
+              <div className="radio-group">
+                <label className="radio-button">
+                  <input
+                    type="radio"
+                    value="non-partner"
+                    checked={!isPartner}
+                    onChange={() => setIsPartner(false)}
+                  />
+                  비제휴가
+                </label>
+                <label className="radio-button">
+                  <input
+                    type="radio"
+                    value="partner"
+                    checked={isPartner}
+                    onChange={() => setIsPartner(true)}
+                  />
+                  제휴가
+                </label>
+              </div>
             </div>
           </div>
         </div>
 
         {/* 플랜 목록 */}
-        <div className="plans-section">
-          {/* 메인 플랜 */}
-          <div className="plan-category">
-            <h2 className="category-title">기본 플랜</h2>
+        <div className="form-section">
+          <h2 className="section-title">플랜 목록</h2>
+          <div className="plans-section">
+            {/* 메인 플랜 */}
+            <div className="plan-category">
+              <h3 className="category-title">기본 플랜</h3>
             <div className="plans-grid">
               {PLANS.filter(plan => plan.category === 'main').map(plan => {
                 const isSelected = isPlanSelected(plan.id);
@@ -254,9 +259,9 @@ export function PlanSelectionPage() {
             </div>
           </div>
 
-          {/* 부가 서비스 */}
-          <div className="plan-category">
-            <h2 className="category-title">부가 서비스</h2>
+            {/* 부가 서비스 */}
+            <div className="plan-category">
+              <h3 className="category-title">부가 서비스</h3>
             <div className="plans-grid">
               {PLANS.filter(plan => plan.category === 'addon').map(plan => {
                 const isSelected = isPlanSelected(plan.id);
@@ -310,12 +315,14 @@ export function PlanSelectionPage() {
                 );
               })}
             </div>
+            </div>
           </div>
         </div>
 
         {/* 선택된 플랜 요약 */}
-        <div className="selected-summary">
-          <h3 className="summary-title">선택된 플랜</h3>
+        <div className="form-section">
+          <h2 className="section-title">선택된 플랜</h2>
+          <div className="selected-summary">
           {selectedPlans.length > 0 ? (
             <div className="selected-plans">
               {selectedPlans.map(plan => (
@@ -331,6 +338,7 @@ export function PlanSelectionPage() {
           ) : (
             <p className="no-selection">선택된 플랜이 없습니다</p>
           )}
+          </div>
         </div>
 
         {/* 버튼 영역 */}

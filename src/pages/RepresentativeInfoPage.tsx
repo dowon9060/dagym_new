@@ -6,6 +6,23 @@ import { StepNavigation } from '../components/StepNavigation';
 import { RepresentativeInfo } from '../types';
 import { ROUTES } from '../utils/constants';
 
+// Daum Postcode API 타입 선언 (이미 있다면 추가하지 않음)
+declare global {
+  interface Window {
+    daum: {
+      Postcode: new (options: {
+        oncomplete: (data: {
+          roadAddress: string;
+          jibunAddress: string;
+          zonecode: string;
+        }) => void;
+      }) => {
+        open: () => void;
+      };
+    };
+  }
+}
+
 interface RepresentativeFormData extends RepresentativeInfo {
   privacyAgreement?: boolean;
 }
@@ -19,6 +36,7 @@ export function RepresentativeInfoPage() {
     handleSubmit,
     formState: { errors, isValid },
     watch,
+    setValue,
   } = useForm<RepresentativeFormData>({
     defaultValues: state.representativeInfo,
     mode: 'onChange',
@@ -84,7 +102,7 @@ export function RepresentativeInfoPage() {
           <div className="form-section">
             <h2 className="section-title">개인 정보</h2>
             
-            <div className="form-grid">
+            <div className="form-fields-vertical">
               {/* 성함 */}
               <div className="form-group">
                 <label htmlFor="name" className="form-label">
@@ -104,11 +122,11 @@ export function RepresentativeInfoPage() {
                       message: '한글 또는 영문만 입력 가능합니다'
                     }
                   })}
-                  className={`form-input ${errors.name ? 'error' : ''}`}
+                  className={`input-field ${errors.name ? 'error' : ''}`}
                   placeholder="성함을 입력하세요"
                 />
                 {errors.name && (
-                  <span className="error-text">{errors.name.message}</span>
+                  <span className="error-message">{errors.name.message}</span>
                 )}
               </div>
 
@@ -127,7 +145,7 @@ export function RepresentativeInfoPage() {
                       message: '올바른 휴대폰번호 형식이 아닙니다 (010-0000-0000)'
                     }
                   })}
-                  className={`form-input ${errors.phoneNumber ? 'error' : ''}`}
+                  className={`input-field ${errors.phoneNumber ? 'error' : ''}`}
                   placeholder="010-0000-0000"
                   onChange={(e) => {
                     const formatted = formatPhoneNumber(e.target.value);
@@ -135,44 +153,47 @@ export function RepresentativeInfoPage() {
                   }}
                 />
                 {errors.phoneNumber && (
-                  <span className="error-text">{errors.phoneNumber.message}</span>
+                  <span className="error-message">{errors.phoneNumber.message}</span>
                 )}
               </div>
-            </div>
 
-            {/* 주소 */}
-            <div className="form-group full-width">
-              <label htmlFor="address" className="form-label">
-                주소 <span className="required">*</span>
-              </label>
-              <div className="address-input-group">
-                <textarea
-                  id="address"
-                  {...register('address', {
-                    required: '주소를 입력해주세요',
-                    minLength: {
-                      value: 10,
-                      message: '주소는 10글자 이상 입력해주세요'
-                    }
-                  })}
-                  className={`form-textarea ${errors.address ? 'error' : ''}`}
-                  placeholder="주소를 입력하세요"
-                  rows={3}
-                />
-                <button
-                  type="button"
-                  className="address-search-btn"
-                  onClick={() => {
-                    // TODO: 주소 검색 API 연동 (다음 우편번호 서비스 등)
-                    alert('주소 검색 기능은 추후 구현 예정입니다');
-                  }}
-                >
-                  주소 검색
-                </button>
+              {/* 주소 */}
+              <div className="form-group">
+                <label htmlFor="address" className="form-label">
+                  주소 <span className="required">*</span>
+                </label>
+                <div className="address-input-container">
+                  <input
+                    type="text"
+                    id="address"
+                    {...register('address', {
+                      required: '주소를 입력해주세요'
+                    })}
+                    className={`input-field ${errors.address ? 'error' : ''}`}
+                    placeholder="주소 검색 버튼을 클릭하세요"
+                    readOnly
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      // Daum 우편번호 서비스 팝업 호출
+                      new window.daum.Postcode({
+                        oncomplete: function(data) {
+                          // 선택된 주소 정보를 React Hook Form에 설정
+                          const fullAddress = data.roadAddress || data.jibunAddress;
+                          setValue('address', fullAddress, { shouldValidate: true });
+                        }
+                      }).open();
+                    }}
+                    className="address-search-btn"
+                  >
+                    🔍 주소 검색
+                  </button>
+                </div>
+                {errors.address && (
+                  <span className="error-message">{errors.address.message}</span>
+                )}
               </div>
-              {errors.address && (
-                <span className="error-text">{errors.address.message}</span>
-              )}
             </div>
           </div>
 
@@ -206,15 +227,16 @@ export function RepresentativeInfoPage() {
                 <label className="checkbox-label">
                   <input
                     type="checkbox"
+                    className="checkbox-field"
                     {...register('privacyAgreement', {
                       required: '개인정보 처리 동의는 필수입니다'
                     })}
                   />
-                  <span className="checkmark"></span>
+                  <span className="checkbox-custom"></span>
                   개인정보 수집 및 이용에 동의합니다 <span className="required">*</span>
                 </label>
                 {errors.privacyAgreement && (
-                  <span className="error-text">{errors.privacyAgreement.message}</span>
+                  <span className="error-message">{errors.privacyAgreement.message}</span>
                 )}
               </div>
             </div>
