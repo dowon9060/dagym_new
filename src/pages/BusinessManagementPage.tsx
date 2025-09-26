@@ -183,9 +183,6 @@ export function BusinessManagementPage() {
                     <th>대표자</th>
                     <th>업종</th>
                     <th>등록일시</th>
-                    <th>상태</th>
-                    <th>계약수</th>
-                    <th>시설수</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -200,13 +197,6 @@ export function BusinessManagementPage() {
                       <td className="representative-name">{business.representativeName}</td>
                       <td className="business-category">{business.businessCategory}</td>
                       <td className="registration-date">{formatDateTime(business.registrationDate)}</td>
-                      <td>
-                        <span className={`business-status ${business.status === '활성' ? 'active' : 'inactive'}`}>
-                          {business.status}
-                        </span>
-                      </td>
-                      <td className="contract-count">{business.contractCount}</td>
-                      <td className="facility-count">{business.facilityCount}</td>
                     </tr>
                   ))}
                 </tbody>
