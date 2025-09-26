@@ -15,125 +15,140 @@ export function PlanSelectionPage() {
 
   // 기본 플랜 선택/해제 처리 (단일 선택)
   const handlePlanToggle = (planId: string, isSelected: boolean) => {
-    console.log('🔍 handlePlanToggle 호출:', { planId, isSelected, currentPlans: localSelectedPlans });
+    console.log('🔍 매출솔루션 handlePlanToggle 호출:', { planId, isSelected, currentPlans: localSelectedPlans });
     const plan = PLANS.find(p => p.id === planId);
     if (!plan) {
       console.log('❌ 플랜을 찾을 수 없습니다:', planId);
       return;
     }
 
-    if (isSelected) {
-      // 기본 플랜은 단일 선택이므로 기존 기본 플랜들을 모두 제거하고 새로운 플랜 추가
-      const newPlans = localSelectedPlans.filter(p => {
-        const existingPlan = PLANS.find(existing => existing.id === p.planId);
-        return existingPlan?.category !== 'main';
-      });
-
-      let price = billingType === 'yearly' ? plan.yearlyPrice : plan.monthlyPrice;
+    setLocalSelectedPlans(prevPlans => {
+      console.log('📝 이전 플랜들:', prevPlans);
       
-      // 파트너 가격이 있는 경우
-      if (plan.partnerPrice !== undefined && plan.nonPartnerPrice !== undefined) {
-        if (billingType === 'yearly') {
-          price = isPartner ? plan.partnerPrice : plan.nonPartnerPrice;
-        } else {
-          // 월간 가격 계산 (연간 가격을 12로 나눔)
-          const yearlyPrice = isPartner ? plan.partnerPrice : plan.nonPartnerPrice;
-          price = Math.round(yearlyPrice / 12);
+      if (isSelected) {
+        // 기본 플랜은 단일 선택이므로 기존 기본 플랜들을 모두 제거하고 새로운 플랜 추가
+        const newPlans = prevPlans.filter(p => {
+          const existingPlan = PLANS.find(existing => existing.id === p.planId);
+          return existingPlan?.category !== 'main';
+        });
+
+        let price = billingType === 'yearly' ? plan.yearlyPrice : plan.monthlyPrice;
+        
+        // 파트너 가격이 있는 경우
+        if (plan.partnerPrice !== undefined && plan.nonPartnerPrice !== undefined) {
+          if (billingType === 'yearly') {
+            price = isPartner ? plan.partnerPrice : plan.nonPartnerPrice;
+          } else {
+            // 월간 가격 계산 (연간 가격을 12로 나눔)
+            const yearlyPrice = isPartner ? plan.partnerPrice : plan.nonPartnerPrice;
+            price = Math.round(yearlyPrice / 12);
+          }
         }
+
+        const newPlan: SelectedPlan = {
+          planId: plan.id,
+          planName: plan.name,
+          billingType,
+          price,
+        };
+
+        const updatedPlans = [...newPlans, newPlan];
+        console.log('✅ 매출솔루션 플랜 추가:', newPlan);
+        console.log('📋 업데이트된 플랜들:', updatedPlans);
+        return updatedPlans;
+      } else {
+        // 플랜 제거
+        const filteredPlans = prevPlans.filter(p => p.planId !== planId);
+        console.log('🗑️ 플랜 제거 후:', filteredPlans);
+        return filteredPlans;
       }
-
-      const newPlan: SelectedPlan = {
-        planId: plan.id,
-        planName: plan.name,
-        billingType,
-        price,
-      };
-
-      console.log('✅ 기본 플랜 추가:', newPlan);
-      setLocalSelectedPlans([...newPlans, newPlan]);
-    } else {
-      // 플랜 제거
-      setLocalSelectedPlans(prev => prev.filter(p => p.planId !== planId));
-    }
+    });
   };
 
   // 부가 서비스 선택/해제 처리 (복수 선택)
   const handleAddonPlanToggle = (planId: string, isSelected: boolean) => {
-    console.log('🔍 handleAddonPlanToggle 호출:', { planId, isSelected, currentPlans: localSelectedPlans });
+    console.log('🔍 운영솔루션 handleAddonPlanToggle 호출:', { planId, isSelected, currentPlans: localSelectedPlans });
     const plan = PLANS.find(p => p.id === planId);
     if (!plan) {
       console.log('❌ 플랜을 찾을 수 없습니다:', planId);
       return;
     }
 
-    if (isSelected) {
-      // 플랜 추가
-      let price = billingType === 'yearly' ? plan.yearlyPrice : plan.monthlyPrice;
+    setLocalSelectedPlans(prevPlans => {
+      console.log('📝 이전 플랜들:', prevPlans);
       
-      // 파트너 가격이 있는 경우
-      if (plan.partnerPrice !== undefined && plan.nonPartnerPrice !== undefined) {
-        if (billingType === 'yearly') {
-          price = isPartner ? plan.partnerPrice : plan.nonPartnerPrice;
-        } else {
-          // 월간 가격 계산 (연간 가격을 12로 나눔)
-          const yearlyPrice = isPartner ? plan.partnerPrice : plan.nonPartnerPrice;
-          price = Math.round(yearlyPrice / 12);
-        }
-      }
-
-      const newPlan: SelectedPlan = {
-        planId: plan.id,
-        planName: plan.name,
-        billingType,
-        price,
-      };
-
-      console.log('✅ 부가 서비스 추가:', newPlan);
-      setLocalSelectedPlans(prev => [...prev, newPlan]);
-    } else {
-      // 플랜 제거
-      setLocalSelectedPlans(prev => {
-        const filtered = prev.filter(p => p.planId !== planId);
+      if (isSelected) {
+        // 플랜 추가
+        let price = billingType === 'yearly' ? plan.yearlyPrice : plan.monthlyPrice;
         
-                // 다짐매니저를 제거하는 경우, 다른 부가서비스들도 모두 제거
-                if (planId === 'manager') {
-          return filtered.filter(p => {
+        // 파트너 가격이 있는 경우
+        if (plan.partnerPrice !== undefined && plan.nonPartnerPrice !== undefined) {
+          if (billingType === 'yearly') {
+            price = isPartner ? plan.partnerPrice : plan.nonPartnerPrice;
+          } else {
+            // 월간 가격 계산 (연간 가격을 12로 나눔)
+            const yearlyPrice = isPartner ? plan.partnerPrice : plan.nonPartnerPrice;
+            price = Math.round(yearlyPrice / 12);
+          }
+        }
+
+        const newPlan: SelectedPlan = {
+          planId: plan.id,
+          planName: plan.name,
+          billingType,
+          price,
+        };
+
+        const updatedPlans = [...prevPlans, newPlan];
+        console.log('✅ 운영솔루션 플랜 추가:', newPlan);
+        console.log('📋 업데이트된 플랜들:', updatedPlans);
+        return updatedPlans;
+      } else {
+        // 플랜 제거
+        let filtered = prevPlans.filter(p => p.planId !== planId);
+        
+        // 다짐매니저를 제거하는 경우, 다른 부가서비스들도 모두 제거
+        if (planId === 'manager') {
+          filtered = filtered.filter(p => {
             const existingPlan = PLANS.find(existing => existing.id === p.planId);
             return existingPlan?.category !== 'addon';
           });
+          console.log('🗑️ 다짐매니저 제거로 인한 모든 부가서비스 제거 후:', filtered);
+        } else {
+          console.log('🗑️ 플랜 제거 후:', filtered);
         }
         
         return filtered;
       });
-    }
+    });
   };
 
-  // 과금 주기 변경 시 선택된 플랜들의 가격 업데이트
+  // 과금 주기 또는 파트너 상태 변경 시 선택된 플랜들의 가격 업데이트
   useEffect(() => {
-    const updatedPlans = localSelectedPlans.map(selectedPlan => {
-      const plan = PLANS.find(p => p.id === selectedPlan.planId);
-      if (!plan) return selectedPlan;
+    setLocalSelectedPlans(currentPlans => {
+      return currentPlans.map(selectedPlan => {
+        const plan = PLANS.find(p => p.id === selectedPlan.planId);
+        if (!plan) return selectedPlan;
 
-      let price = billingType === 'yearly' ? plan.yearlyPrice : plan.monthlyPrice;
-      
-      if (plan.partnerPrice !== undefined && plan.nonPartnerPrice !== undefined) {
-        if (billingType === 'yearly') {
-          price = isPartner ? plan.partnerPrice : plan.nonPartnerPrice;
-        } else {
-          const yearlyPrice = isPartner ? plan.partnerPrice : plan.nonPartnerPrice;
-          price = Math.round(yearlyPrice / 12);
+        let price = billingType === 'yearly' ? plan.yearlyPrice : plan.monthlyPrice;
+        
+        if (plan.partnerPrice !== undefined && plan.nonPartnerPrice !== undefined) {
+          if (billingType === 'yearly') {
+            price = isPartner ? plan.partnerPrice : plan.nonPartnerPrice;
+          } else {
+            const yearlyPrice = isPartner ? plan.partnerPrice : plan.nonPartnerPrice;
+            price = Math.round(yearlyPrice / 12);
+          }
         }
-      }
 
-      return {
-        ...selectedPlan,
-        billingType,
-        price,
-      };
+        return {
+          ...selectedPlan,
+          billingType,
+          price,
+        };
+      });
     });
-
-    setLocalSelectedPlans(updatedPlans);
-  }, [billingType, isPartner, localSelectedPlans]);
+  }, [billingType, isPartner]);
 
   // 자동 제휴가 계산 로직
   useEffect(() => {
