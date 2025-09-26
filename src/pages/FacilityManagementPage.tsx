@@ -159,34 +159,38 @@ export function FacilityManagementPage() {
           {/* 시설 목록 */}
           <section className="facilities-section">
             <h2 className="section-title">시설 목록</h2>
-            <div className="facilities-grid">
-              {facilities.map((facility) => (
-                <div key={facility.id} className="facility-card">
-                  <div className="facility-header">
-                    <h3 className="facility-name">{facility.name}</h3>
-                    <span className={`facility-status ${facility.status === '운영중' ? 'active' : 'inactive'}`}>
-                      {facility.status}
-                    </span>
-                  </div>
-                  <div className="facility-details">
-                    <div className="facility-type">{facility.type}</div>
-                    <div className="facility-stats">
-                      <div className="facility-stat">
-                        <span className="stat-label">회원 수</span>
-                        <span className="stat-value">{facility.memberCount}명</span>
-                      </div>
-                      <div className="facility-stat">
-                        <span className="stat-label">이번 달 매출</span>
-                        <span className="stat-value">{(facility.revenue / 10000).toLocaleString()}만원</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="facility-actions">
-                    <button className="btn-outline">상세보기</button>
-                    <button className="btn-outline">관리</button>
-                  </div>
-                </div>
-              ))}
+            <div className="facilities-table-container">
+              <table className="facilities-table">
+                <thead>
+                  <tr>
+                    <th>시설명</th>
+                    <th>타입</th>
+                    <th>운영상태</th>
+                    <th>회원 수</th>
+                    <th>이번 달 매출</th>
+                    <th>관리</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {facilities.map((facility) => (
+                    <tr key={facility.id} className="facility-row">
+                      <td className="facility-name">{facility.name}</td>
+                      <td className="facility-type">{facility.type}</td>
+                      <td>
+                        <span className={`facility-status ${facility.status === '운영중' ? 'active' : 'inactive'}`}>
+                          {facility.status}
+                        </span>
+                      </td>
+                      <td className="facility-members">{facility.memberCount}명</td>
+                      <td className="facility-revenue">{(facility.revenue / 10000).toLocaleString()}만원</td>
+                      <td className="facility-actions">
+                        <button className="btn-outline btn-sm">상세보기</button>
+                        <button className="btn-outline btn-sm">관리</button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </section>
         </div>

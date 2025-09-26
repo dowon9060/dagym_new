@@ -993,39 +993,57 @@ body {
   margin-top: var(--space-8);
 }
 
-.facilities-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: var(--space-4);
+.facilities-table-container {
   margin-top: var(--space-4);
-}
-
-.facility-card {
   background: var(--bg-card);
-  border: 1px solid var(--border-light);
   border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  overflow-x: auto;
+  box-shadow: var(--shadow-sm);
+}
+
+.facilities-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.facilities-table thead {
+  background: var(--bg-secondary);
+  border-bottom: 2px solid var(--border-light);
+}
+
+.facilities-table th {
   padding: var(--space-4);
-  transition: all var(--transition-normal);
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  border-bottom: 1px solid var(--border-light);
 }
 
-.facility-card:hover {
-  border-color: var(--border-medium);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
+.facilities-table tbody tr {
+  border-bottom: 1px solid var(--border-light);
+  transition: background-color var(--transition-fast);
 }
 
-.facility-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--space-3);
+.facilities-table tbody tr:hover {
+  background: var(--bg-secondary);
+}
+
+.facilities-table td {
+  padding: var(--space-4);
+  vertical-align: middle;
+  color: var(--text-primary);
 }
 
 .facility-name {
-  font-size: var(--text-lg);
   font-weight: 600;
   color: var(--text-primary);
-  margin: 0;
+}
+
+.facility-type {
+  color: var(--text-muted);
 }
 
 .facility-status {
@@ -1045,42 +1063,22 @@ body {
   color: var(--warning);
 }
 
-.facility-details {
-  margin-bottom: var(--space-4);
-}
-
-.facility-type {
-  font-size: var(--text-sm);
-  color: var(--text-muted);
-  margin-bottom: var(--space-2);
-}
-
-.facility-stats {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.facility-stat {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.facility-stat .stat-label {
-  font-size: var(--text-sm);
-  color: var(--text-muted);
-}
-
-.facility-stat .stat-value {
-  font-size: var(--text-sm);
-  font-weight: 600;
-  color: var(--text-primary);
+.facility-members,
+.facility-revenue {
+  font-weight: 500;
 }
 
 .facility-actions {
   display: flex;
   gap: var(--space-2);
+  justify-content: flex-start;
+}
+
+.btn-sm {
+  padding: var(--space-1) var(--space-2);
+  font-size: var(--text-xs);
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
 }
 
 .btn-outline {
