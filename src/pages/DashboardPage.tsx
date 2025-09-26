@@ -11,9 +11,6 @@ export function DashboardPage() {
     navigate(ROUTES.BUSINESS_INFO);
   };
 
-  const handleContractList = () => {
-    navigate(ROUTES.CONTRACT_LIST);
-  };
 
   const handleFacilityManagement = () => {
     navigate(ROUTES.FACILITY_MANAGEMENT);
@@ -102,17 +99,6 @@ export function DashboardPage() {
                     </div>
                   </div>
 
-                  <div 
-                    className="action-card"
-                    onClick={handleContractList}
-                  >
-                    <div className="action-content">
-                      <h3 className="action-title">계약서 목록</h3>
-                      <p className="action-description">
-                        기존 계약서들을 확인하고 관리하세요
-                      </p>
-                    </div>
-                  </div>
 
                   <div 
                     className="action-card"
@@ -200,12 +186,6 @@ export function DashboardPage() {
               </div>
             </div>
             
-            <button 
-              className="view-all-button"
-              onClick={handleContractList}
-            >
-              전체 보기
-            </button>
           </section>
 
         </div>
