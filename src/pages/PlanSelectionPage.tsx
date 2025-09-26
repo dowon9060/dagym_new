@@ -120,7 +120,6 @@ export function PlanSelectionPage() {
         
         return filtered;
       });
-    });
   };
 
   // 과금 주기 또는 파트너 상태 변경 시 선택된 플랜들의 가격 업데이트
