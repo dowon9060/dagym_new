@@ -4,6 +4,7 @@ export interface BusinessInfo {
   businessNumber: string;
   representativeName: string;
   businessAddress: string;
+  businessDetailAddress?: string;
   businessType: string;
   businessCategory: string;
   businessRegistrationCert?: File | string;
@@ -23,6 +24,7 @@ export interface RepresentativeInfo {
   name: string;
   phoneNumber: string;
   address: string;
+  detailAddress?: string;
   agreeToPersonalInfo?: boolean;
 }
 

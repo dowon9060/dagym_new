@@ -194,6 +194,20 @@ export function RepresentativeInfoPage() {
                   <span className="error-message">{errors.address.message}</span>
                 )}
               </div>
+
+              {/* 상세주소 */}
+              <div className="form-group">
+                <label htmlFor="detailAddress" className="form-label">
+                  상세주소
+                </label>
+                <input
+                  type="text"
+                  id="detailAddress"
+                  {...register('detailAddress')}
+                  className="input-field"
+                  placeholder="건물명, 동호수 등 상세주소를 입력하세요"
+                />
+              </div>
             </div>
           </div>
 

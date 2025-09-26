@@ -13,8 +13,47 @@ export function PlanSelectionPage() {
   const [billingType, setBillingType] = useState<'monthly' | 'yearly'>('yearly');
   const [isPartner, setIsPartner] = useState(false);
 
-  // 플랜 선택/해제 처리
+  // 기본 플랜 선택/해제 처리 (단일 선택)
   const handlePlanToggle = (planId: string, isSelected: boolean) => {
+    const plan = PLANS.find(p => p.id === planId);
+    if (!plan) return;
+
+    if (isSelected) {
+      // 기본 플랜은 단일 선택이므로 기존 기본 플랜들을 모두 제거하고 새로운 플랜 추가
+      const newPlans = selectedPlans.filter(p => {
+        const existingPlan = PLANS.find(existing => existing.id === p.planId);
+        return existingPlan?.category !== 'main';
+      });
+
+      let price = billingType === 'yearly' ? plan.yearlyPrice : plan.monthlyPrice;
+      
+      // 파트너 가격이 있는 경우
+      if (plan.partnerPrice !== undefined && plan.nonPartnerPrice !== undefined) {
+        if (billingType === 'yearly') {
+          price = isPartner ? plan.partnerPrice : plan.nonPartnerPrice;
+        } else {
+          // 월간 가격 계산 (연간 가격을 12로 나눔)
+          const yearlyPrice = isPartner ? plan.partnerPrice : plan.nonPartnerPrice;
+          price = Math.round(yearlyPrice / 12);
+        }
+      }
+
+      const newPlan: SelectedPlan = {
+        planId: plan.id,
+        planName: plan.name,
+        billingType,
+        price,
+      };
+
+      setLocalSelectedPlans([...newPlans, newPlan]);
+    } else {
+      // 플랜 제거
+      setLocalSelectedPlans(prev => prev.filter(p => p.planId !== planId));
+    }
+  };
+
+  // 부가 서비스 선택/해제 처리 (복수 선택) 
+  const handleAddonPlanToggle = (planId: string, isSelected: boolean) => {
     const plan = PLANS.find(p => p.id === planId);
     if (!plan) return;
 
@@ -43,7 +82,19 @@ export function PlanSelectionPage() {
       setLocalSelectedPlans(prev => [...prev, newPlan]);
     } else {
       // 플랜 제거
-      setLocalSelectedPlans(prev => prev.filter(p => p.planId !== planId));
+      setLocalSelectedPlans(prev => {
+        const filtered = prev.filter(p => p.planId !== planId);
+        
+        // 다짐매니저를 제거하는 경우, 다른 부가서비스들도 모두 제거
+        if (planId === 'dagym-manager') {
+          return filtered.filter(p => {
+            const existingPlan = PLANS.find(existing => existing.id === p.planId);
+            return existingPlan?.category !== 'addon';
+          });
+        }
+        
+        return filtered;
+      });
     }
   };
 
@@ -229,7 +280,8 @@ export function PlanSelectionPage() {
                 return (
                   <div 
                     key={plan.id} 
-                    className={`plan-card ${isSelected ? 'selected' : ''} ${isRequired ? 'required' : ''}`}
+                    className={`plan-card ${isSelected ? 'selected' : ''} ${isRequired ? 'required' : ''} clickable`}
+                    onClick={() => !isRequired && handlePlanToggle(plan.id, !isSelected)}
                   >
                     <div className="plan-header">
                       <h3 className="plan-name">{plan.name}</h3>
@@ -241,17 +293,14 @@ export function PlanSelectionPage() {
                       <span className="period">/ {billingType === 'yearly' ? '년' : '월'}</span>
                     </div>
 
-                    <div className="plan-actions">
-                      <label className="plan-checkbox">
-                        <input
-                          type="checkbox"
-                          checked={isSelected || isRequired}
-                          disabled={isRequired}
-                          onChange={(e) => handlePlanToggle(plan.id, e.target.checked)}
-                        />
-                        <span className="checkmark"></span>
-                        {isRequired ? '기본 포함' : '선택'}
-                      </label>
+                    <div className="plan-status">
+                      {isRequired ? (
+                        <span className="status-text required">기본 포함</span>
+                      ) : (
+                        <span className={`status-text ${isSelected ? 'selected' : ''}`}>
+                          {isSelected ? '✓ 선택됨' : '클릭하여 선택'}
+                        </span>
+                      )}
                     </div>
                   </div>
                 );
@@ -266,14 +315,19 @@ export function PlanSelectionPage() {
               {PLANS.filter(plan => plan.category === 'addon').map(plan => {
                 const isSelected = isPlanSelected(plan.id);
                 const price = getPlanPrice(plan);
+                const isDagymManagerSelected = isPlanSelected('dagym-manager'); // 다짐매니저 선택 여부
+                const isDagymManager = plan.id === 'dagym-manager';
+                const isDisabled = !isDagymManager && !isDagymManagerSelected;
 
                 return (
                   <div 
                     key={plan.id} 
-                    className={`plan-card ${isSelected ? 'selected' : ''}`}
+                    className={`plan-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : 'clickable'}`}
+                    onClick={() => !isDisabled && handleAddonPlanToggle(plan.id, !isSelected)}
                   >
                     <div className="plan-header">
                       <h3 className="plan-name">{plan.name}</h3>
+                      {isDagymManager && <span className="required-badge">기본 필수</span>}
                     </div>
                     
                     <div className="plan-price">
@@ -300,16 +354,14 @@ export function PlanSelectionPage() {
                       )}
                     </div>
 
-                    <div className="plan-actions">
-                      <label className="plan-checkbox">
-                        <input
-                          type="checkbox"
-                          checked={isSelected}
-                          onChange={(e) => handlePlanToggle(plan.id, e.target.checked)}
-                        />
-                        <span className="checkmark"></span>
-                        선택
-                      </label>
+                    <div className="plan-status">
+                      {isDisabled ? (
+                        <span className="status-text disabled">다짐매니저 필요</span>
+                      ) : (
+                        <span className={`status-text ${isSelected ? 'selected' : ''}`}>
+                          {isSelected ? '✓ 선택됨' : '클릭하여 선택'}
+                        </span>
+                      )}
                     </div>
                   </div>
                 );

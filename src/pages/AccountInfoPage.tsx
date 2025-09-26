@@ -61,13 +61,6 @@ export function AccountInfoPage() {
     navigate(ROUTES.BUSINESS_INFO);
   };
 
-  // 계좌번호 포맷팅 함수
-  const formatAccountNumber = (value: string) => {
-    // 숫자만 추출
-    const numbers = value.replace(/\D/g, '');
-    // 4자리씩 끊어서 하이픈 추가
-    return numbers.replace(/(\d{4})(?=\d)/g, '$1-');
-  };
 
   return (
     <div className="contract-form-page">
@@ -123,8 +116,8 @@ export function AccountInfoPage() {
                   {...register('accountNumber', {
                     required: '계좌번호를 입력해주세요',
                     pattern: {
-                      value: /^[\d-]+$/,
-                      message: '올바른 계좌번호 형식이 아닙니다'
+                      value: /^\d+$/,
+                      message: '숫자만 입력 가능합니다'
                     },
                     minLength: {
                       value: 10,
@@ -132,11 +125,7 @@ export function AccountInfoPage() {
                     }
                   })}
                   className={`input-field ${errors.accountNumber ? 'error' : ''}`}
-                  placeholder="1234-567-890123"
-                  onChange={(e) => {
-                    const formatted = formatAccountNumber(e.target.value);
-                    e.target.value = formatted;
-                  }}
+                  placeholder="계좌번호를 입력하세요 (숫자만)"
                 />
                 {errors.accountNumber && (
                   <span className="error-message">{errors.accountNumber.message}</span>
