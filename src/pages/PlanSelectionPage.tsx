@@ -215,35 +215,6 @@ export function PlanSelectionPage() {
           </p>
 
         {/* 옵션 설정 */}
-        <div className="form-section">
-          <h2 className="section-title">설정 옵션</h2>
-          <div className="plan-options">
-            <div className="billing-type">
-              <label className="option-label">과금 주기</label>
-              <div className="radio-group">
-                <label className="radio-button">
-                  <input
-                    type="radio"
-                    value="monthly"
-                    checked={billingType === 'monthly'}
-                    onChange={(e) => setBillingType(e.target.value as 'monthly')}
-                  />
-                  월간
-                </label>
-                <label className="radio-button">
-                  <input
-                    type="radio"
-                    value="yearly"
-                    checked={billingType === 'yearly'}
-                    onChange={(e) => setBillingType(e.target.value as 'yearly')}
-                  />
-                  연간 (할인)
-                </label>
-              </div>
-            </div>
-
-          </div>
-        </div>
 
         {/* 운영솔루션 */}
         <div className="form-section">
