@@ -1,7 +1,24 @@
 import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { ROUTES } from '../utils/constants';
+
+declare global {
+  interface Window {
+    daum: {
+      Postcode: new (options: {
+        oncomplete: (data: {
+          roadAddress: string;
+          jibunAddress: string;
+          zonecode: string;
+        }) => void;
+      }) => {
+        open: () => void;
+      };
+    };
+  }
+}
 
 export function BusinessManagementPage() {
   const { user, logout } = useAuth();
@@ -181,8 +198,7 @@ export function BusinessManagementPage() {
                     <th>사업자명</th>
                     <th>사업자번호</th>
                     <th>대표자</th>
-                    <th>업종</th>
-                    <th>등록일시</th>
+                    <th>사업자 주소</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -195,8 +211,12 @@ export function BusinessManagementPage() {
                       <td className="business-name">{business.businessName}</td>
                       <td className="business-number">{business.businessNumber}</td>
                       <td className="representative-name">{business.representativeName}</td>
-                      <td className="business-category">{business.businessCategory}</td>
-                      <td className="registration-date">{formatDateTime(business.registrationDate)}</td>
+                      <td className="business-address">
+                        {business.businessAddress}
+                        {business.businessDetailAddress && (
+                          <span className="detail-address-inline"> {business.businessDetailAddress}</span>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -214,8 +234,49 @@ export function BusinessManagementPage() {
   );
 }
 
-// 사업자 상세보기 모달 컴포넌트
+// 사업자 상세보기/수정 모달 컴포넌트
 function BusinessDetailModal({ business, onClose }: { business: any; onClose: () => void }) {
+  const [isEditing, setIsEditing] = useState(false);
+  const [businessFiles, setBusinessFiles] = useState<{[key: string]: File | null}>({
+    businessRegistrationCert: null,
+    sportsLicenseCert: null
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+    setValue,
+    watch,
+  } = useForm({
+    defaultValues: {
+      businessName: business.businessName,
+      businessNumber: business.businessNumber,
+      representativeName: business.representativeName,
+      businessType: business.businessType,
+      businessCategory: business.businessCategory,
+      businessAddress: business.businessAddress,
+      businessDetailAddress: business.businessDetailAddress || '',
+      phoneNumber: business.phoneNumber,
+    },
+    mode: 'onChange',
+  });
+
+  const onSubmit = (data: any) => {
+    console.log('수정된 데이터:', data);
+    console.log('첨부파일:', businessFiles);
+    // TODO: 실제 업데이트 API 호출
+    setIsEditing(false);
+    alert('사업자 정보가 수정되었습니다.');
+  };
+
+  const handleFileUpload = (field: string, file: File | null) => {
+    setBusinessFiles(prev => ({
+      ...prev,
+      [field]: file
+    }));
+  };
+
   const formatDateTime = (dateTime: string) => {
     const date = new Date(dateTime);
     return date.toLocaleString('ko-KR', {
@@ -232,96 +293,315 @@ function BusinessDetailModal({ business, onClose }: { business: any; onClose: ()
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content business-detail-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>{business.businessName} 상세정보</h2>
+          <h2>{business.businessName} 정보</h2>
           <button onClick={onClose} className="modal-close-btn">×</button>
         </div>
 
-        <div className="modal-body">
+        <form onSubmit={handleSubmit(onSubmit)} className="modal-body business-form">
+          
           {/* 기본 정보 */}
           <div className="form-section">
-            <h3 className="form-section-title">사업자 기본정보</h3>
-            
-            <div className="detail-grid">
-              <div className="detail-item">
-                <label className="detail-label">사업자명</label>
-                <div className="detail-value">{business.businessName}</div>
+            <h2 className="section-title">기본 정보</h2>
+            <div className="form-fields-vertical">
+              
+              {/* 사업자명 */}
+              <div className="form-group">
+                <label htmlFor="businessName" className="form-label">
+                  사업자명 <span className="required">*</span>
+                </label>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    id="businessName"
+                    {...register('businessName', {
+                      required: '사업자명을 입력해주세요'
+                    })}
+                    className={`input-field ${errors.businessName ? 'error' : ''}`}
+                    placeholder="사업자명을 입력하세요"
+                  />
+                ) : (
+                  <div className="input-field readonly">{business.businessName}</div>
+                )}
+                {errors.businessName && (
+                  <span className="error-message">{errors.businessName.message}</span>
+                )}
               </div>
 
-              <div className="detail-item">
-                <label className="detail-label">사업자번호</label>
-                <div className="detail-value">{business.businessNumber}</div>
+              {/* 사업자번호 */}
+              <div className="form-group">
+                <label htmlFor="businessNumber" className="form-label">
+                  사업자번호 <span className="required">*</span>
+                </label>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    id="businessNumber"
+                    {...register('businessNumber', {
+                      required: '사업자번호를 입력해주세요',
+                      pattern: {
+                        value: /^\d{3}-\d{2}-\d{5}$/,
+                        message: '올바른 사업자번호 형식이 아닙니다 (000-00-00000)'
+                      }
+                    })}
+                    className={`input-field ${errors.businessNumber ? 'error' : ''}`}
+                    placeholder="000-00-00000"
+                  />
+                ) : (
+                  <div className="input-field readonly">{business.businessNumber}</div>
+                )}
+                {errors.businessNumber && (
+                  <span className="error-message">{errors.businessNumber.message}</span>
+                )}
               </div>
 
-              <div className="detail-item">
-                <label className="detail-label">대표자명</label>
-                <div className="detail-value">{business.representativeName}</div>
+              {/* 대표자명 */}
+              <div className="form-group">
+                <label htmlFor="representativeName" className="form-label">
+                  대표자명 <span className="required">*</span>
+                </label>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    id="representativeName"
+                    {...register('representativeName', {
+                      required: '대표자명을 입력해주세요'
+                    })}
+                    className={`input-field ${errors.representativeName ? 'error' : ''}`}
+                    placeholder="대표자명을 입력하세요"
+                  />
+                ) : (
+                  <div className="input-field readonly">{business.representativeName}</div>
+                )}
+                {errors.representativeName && (
+                  <span className="error-message">{errors.representativeName.message}</span>
+                )}
               </div>
 
-              <div className="detail-item">
-                <label className="detail-label">업태</label>
-                <div className="detail-value">{business.businessType}</div>
+              {/* 업태 */}
+              <div className="form-group">
+                <label htmlFor="businessType" className="form-label">
+                  업태 <span className="required">*</span>
+                </label>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    id="businessType"
+                    {...register('businessType', {
+                      required: '업태를 입력해주세요'
+                    })}
+                    className={`input-field ${errors.businessType ? 'error' : ''}`}
+                    placeholder="예: 체육시설업, 서비스업, 도매업 등"
+                  />
+                ) : (
+                  <div className="input-field readonly">{business.businessType}</div>
+                )}
+                {errors.businessType && (
+                  <span className="error-message">{errors.businessType.message}</span>
+                )}
               </div>
 
-              <div className="detail-item">
-                <label className="detail-label">업종</label>
-                <div className="detail-value">{business.businessCategory}</div>
+              {/* 업종 */}
+              <div className="form-group">
+                <label htmlFor="businessCategory" className="form-label">
+                  업종 <span className="required">*</span>
+                </label>
+                {isEditing ? (
+                  <select
+                    id="businessCategory"
+                    {...register('businessCategory', {
+                      required: '업종을 선택해주세요'
+                    })}
+                    className={`select-field ${errors.businessCategory ? 'error' : ''}`}
+                  >
+                    <option value="">업종을 선택하세요</option>
+                    <option value="헬스장">헬스장</option>
+                    <option value="필라테스">필라테스</option>
+                    <option value="요가">요가</option>
+                    <option value="크로스핏">크로스핏</option>
+                    <option value="태권도장">태권도장</option>
+                    <option value="수영장">수영장</option>
+                    <option value="기타">기타</option>
+                  </select>
+                ) : (
+                  <div className="input-field readonly">{business.businessCategory}</div>
+                )}
+                {errors.businessCategory && (
+                  <span className="error-message">{errors.businessCategory.message}</span>
+                )}
               </div>
 
-              <div className="detail-item">
-                <label className="detail-label">연락처</label>
-                <div className="detail-value">{business.phoneNumber}</div>
+              {/* 사업자 주소 */}
+              <div className="form-group">
+                <label htmlFor="businessAddress" className="form-label">
+                  사업자 주소 <span className="required">*</span>
+                </label>
+                {isEditing ? (
+                  <div className="address-input-container">
+                    <input
+                      type="text"
+                      id="businessAddress"
+                      {...register('businessAddress', {
+                        required: '사업자 주소를 입력해주세요'
+                      })}
+                      className={`input-field ${errors.businessAddress ? 'error' : ''}`}
+                      placeholder="주소 검색 버튼을 클릭하세요"
+                      readOnly
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        new window.daum.Postcode({
+                          oncomplete: function(data) {
+                            const fullAddress = data.roadAddress || data.jibunAddress;
+                            setValue('businessAddress', fullAddress, { shouldValidate: true });
+                          }
+                        }).open();
+                      }}
+                      className="address-search-btn"
+                    >
+                      🔍 주소 검색
+                    </button>
+                  </div>
+                ) : (
+                  <div className="input-field readonly">{business.businessAddress}</div>
+                )}
+                {errors.businessAddress && (
+                  <span className="error-message">{errors.businessAddress.message}</span>
+                )}
               </div>
 
-              <div className="detail-item">
-                <label className="detail-label">사업자주소</label>
-                <div className="detail-value">{business.businessAddress}</div>
+              {/* 상세주소 */}
+              <div className="form-group">
+                <label htmlFor="businessDetailAddress" className="form-label">
+                  상세주소
+                </label>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    id="businessDetailAddress"
+                    {...register('businessDetailAddress')}
+                    className="input-field"
+                    placeholder="건물명, 동호수 등 상세주소를 입력하세요"
+                  />
+                ) : (
+                  <div className="input-field readonly">{business.businessDetailAddress || '-'}</div>
+                )}
               </div>
 
-              {business.businessDetailAddress && (
-                <div className="detail-item">
-                  <label className="detail-label">상세주소</label>
-                  <div className="detail-value">{business.businessDetailAddress}</div>
-                </div>
-              )}
-
-              <div className="detail-item">
-                <label className="detail-label">등록일시</label>
-                <div className="detail-value">{formatDateTime(business.registrationDate)}</div>
+              {/* 연락처 */}
+              <div className="form-group">
+                <label htmlFor="phoneNumber" className="form-label">
+                  연락처
+                </label>
+                {isEditing ? (
+                  <input
+                    type="tel"
+                    id="phoneNumber"
+                    {...register('phoneNumber')}
+                    className="input-field"
+                    placeholder="010-0000-0000"
+                  />
+                ) : (
+                  <div className="input-field readonly">{business.phoneNumber || '-'}</div>
+                )}
               </div>
 
-              <div className="detail-item">
-                <label className="detail-label">상태</label>
-                <div className="detail-value">
-                  <span className={`business-status ${business.status === '활성' ? 'active' : 'inactive'}`}>
-                    {business.status}
-                  </span>
-                </div>
+              {/* 등록일시 (읽기 전용) */}
+              <div className="form-group">
+                <label className="form-label">등록일시</label>
+                <div className="input-field readonly">{formatDateTime(business.registrationDate)}</div>
               </div>
+
             </div>
           </div>
 
-          {/* 통계 정보 */}
+          {/* 첨부 서류 */}
           <div className="form-section">
-            <h3 className="form-section-title">활동 현황</h3>
-            
-            <div className="detail-grid">
-              <div className="detail-item">
-                <label className="detail-label">계약 수</label>
-                <div className="detail-value">{business.contractCount}건</div>
+            <h2 className="section-title">첨부 서류</h2>
+            <div className="form-fields-vertical">
+              
+              {/* 사업자등록증 */}
+              <div className="form-group">
+                <label className="form-label">
+                  사업자등록증 <span className="required">*</span>
+                </label>
+                {isEditing ? (
+                  <div className="file-upload">
+                    <input
+                      type="file"
+                      accept="image/*,.pdf"
+                      onChange={(e) => handleFileUpload('businessRegistrationCert', e.target.files?.[0] || null)}
+                      className="file-input"
+                    />
+                    <div className="upload-hint">JPG, PNG, PDF 파일만 업로드 가능합니다.</div>
+                  </div>
+                ) : (
+                  <div className="file-info">기존 파일 있음 (수정 시 변경 가능)</div>
+                )}
               </div>
 
-              <div className="detail-item">
-                <label className="detail-label">시설 수</label>
-                <div className="detail-value">{business.facilityCount}개</div>
+              {/* 체육시설업 신고증 */}
+              <div className="form-group">
+                <label className="form-label">
+                  체육시설업 신고증
+                </label>
+                {isEditing ? (
+                  <div className="file-upload">
+                    <input
+                      type="file"
+                      accept="image/*,.pdf"
+                      onChange={(e) => handleFileUpload('sportsLicenseCert', e.target.files?.[0] || null)}
+                      className="file-input"
+                    />
+                    <div className="upload-hint">JPG, PNG, PDF 파일만 업로드 가능합니다.</div>
+                  </div>
+                ) : (
+                  <div className="file-info">기존 파일 있음 (수정 시 변경 가능)</div>
+                )}
               </div>
+
             </div>
           </div>
-        </div>
+
+        </form>
 
         <div className="modal-footer">
-          <button onClick={onClose} className="btn-primary">
-            닫기
-          </button>
+          {isEditing ? (
+            <div className="form-actions">
+              <button
+                type="button"
+                onClick={() => setIsEditing(false)}
+                className="btn-secondary"
+              >
+                취소
+              </button>
+              <button
+                type="submit"
+                onClick={handleSubmit(onSubmit)}
+                className="btn-primary"
+                disabled={!isValid}
+              >
+                저장
+              </button>
+            </div>
+          ) : (
+            <div className="form-actions">
+              <button
+                type="button"
+                onClick={onClose}
+                className="btn-secondary"
+              >
+                닫기
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsEditing(true)}
+                className="btn-primary"
+              >
+                수정
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

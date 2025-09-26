@@ -2805,6 +2805,7 @@ body {
   margin-bottom: var(--space-8);
 }
 
+/* 사업자 테이블 */
 .businesses-table-container {
   background: white;
   border-radius: var(--radius-lg);
@@ -2856,14 +2857,17 @@ body {
   color: var(--text-primary);
 }
 
-.business-category {
-  color: var(--text-secondary);
+.business-address {
+  color: var(--text-primary);
+  max-width: 300px;
+  word-break: break-word;
 }
 
-.registration-date {
-  font-family: 'Courier New', monospace;
-  color: var(--text-secondary);
+.detail-address-inline {
+  display: inline;
   font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin-left: var(--space-1);
 }
 
 .business-status {
@@ -2899,31 +2903,54 @@ body {
   overflow-y: auto;
 }
 
-.business-detail-modal .detail-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: var(--space-4);
-  margin-bottom: var(--space-6);
+.business-detail-modal .business-form {
+  padding: 0;
 }
 
-.business-detail-modal .detail-item {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-.business-detail-modal .detail-label {
+/* 읽기 전용 필드 */
+.input-field.readonly {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
   font-size: var(--text-sm);
-  font-weight: 600;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
-.business-detail-modal .detail-value {
-  font-size: var(--text-base);
-  color: var(--text-primary);
-  word-break: break-word;
+/* 파일 정보 표시 */
+.file-info {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
+/* 파일 입력 */
+.file-input {
+  width: 100%;
+  padding: var(--space-3);
+  border: 2px dashed var(--border-light);
+  border-radius: var(--radius-md);
+  background: var(--bg-secondary);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.file-input:hover {
+  border-color: var(--primary);
+  background: var(--bg-tertiary);
+}
+
+/* 업로드 힌트 */
+.upload-hint {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin-top: var(--space-1);
+  text-align: center;
 }
 
 /* 뒤로가기 버튼 (사업자관리용) */
