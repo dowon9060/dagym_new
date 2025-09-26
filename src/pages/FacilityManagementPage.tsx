@@ -7,6 +7,8 @@ export function FacilityManagementPage() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+  const [selectedFacility, setSelectedFacility] = useState<any>(null);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -21,6 +23,16 @@ export function FacilityManagementPage() {
     setIsRegisterModalOpen(false);
   };
 
+  const handleOpenDetailModal = (facility: any) => {
+    setSelectedFacility(facility);
+    setIsDetailModalOpen(true);
+  };
+
+  const handleCloseDetailModal = () => {
+    setSelectedFacility(null);
+    setIsDetailModalOpen(false);
+  };
+
   // 임시 시설 데이터 (추후 API에서 가져올 예정)
   const facilities = [
     {
@@ -30,6 +42,23 @@ export function FacilityManagementPage() {
       status: '운영중',
       memberCount: 234,
       revenue: 12500000,
+      business: { name: '㈜다짐피트니스', businessNumber: '123-45-67890', representative: '김대표' },
+      address: '서울특별시 강남구 테헤란로 123',
+      detailAddress: '다짐빌딩 2층',
+      category: '헬스',
+      description: '강남 최고의 헬스장입니다. 최신 장비와 전문 트레이너가 함께합니다.',
+      photos: ['gym1.jpg', 'gym2.jpg', 'gym3.jpg'],
+      membershipCards: ['membership1.jpg'],
+      notice: '신규 회원 할인 이벤트 진행중입니다.',
+      operatingHours: {
+        monday: { start: '06:00', end: '24:00', closed: false },
+        tuesday: { start: '06:00', end: '24:00', closed: false },
+        wednesday: { start: '06:00', end: '24:00', closed: false },
+        thursday: { start: '06:00', end: '24:00', closed: false },
+        friday: { start: '06:00', end: '24:00', closed: false },
+        saturday: { start: '08:00', end: '22:00', closed: false },
+        sunday: { start: '08:00', end: '22:00', closed: false },
+      },
     },
     {
       id: 2,
@@ -38,6 +67,23 @@ export function FacilityManagementPage() {
       status: '운영중',
       memberCount: 156,
       revenue: 8900000,
+      business: { name: '헬스케어㈜', businessNumber: '234-56-78901', representative: '이대표' },
+      address: '서울특별시 마포구 홍익로 456',
+      detailAddress: '홍대빌딩 지하1층',
+      category: '크로스핏',
+      description: '홍대 유일한 크로스핏 전문 박스입니다. 체계적인 프로그램을 제공합니다.',
+      photos: ['crossfit1.jpg', 'crossfit2.jpg'],
+      membershipCards: ['membership2.jpg'],
+      notice: '초보자 클래스 신규 오픈!',
+      operatingHours: {
+        monday: { start: '06:00', end: '23:00', closed: false },
+        tuesday: { start: '06:00', end: '23:00', closed: false },
+        wednesday: { start: '06:00', end: '23:00', closed: false },
+        thursday: { start: '06:00', end: '23:00', closed: false },
+        friday: { start: '06:00', end: '23:00', closed: false },
+        saturday: { start: '09:00', end: '18:00', closed: false },
+        sunday: { start: '09:00', end: '18:00', closed: false },
+      },
     },
     {
       id: 3,
@@ -46,6 +92,23 @@ export function FacilityManagementPage() {
       status: '휴업',
       memberCount: 89,
       revenue: 5600000,
+      business: { name: '스포츠센터㈜', businessNumber: '345-67-89012', representative: '박대표' },
+      address: '서울특별시 송파구 잠실로 789',
+      detailAddress: '잠실타워 3층',
+      category: '필라테스',
+      description: '개인별 맞춤 필라테스 레슨을 제공하는 프리미엄 스튜디오입니다.',
+      photos: ['pilates1.jpg', 'pilates2.jpg', 'pilates3.jpg', 'pilates4.jpg'],
+      membershipCards: ['membership3.jpg'],
+      notice: '리뉴얼 공사로 인한 임시 휴업중입니다.',
+      operatingHours: {
+        monday: { start: '09:00', end: '21:00', closed: true },
+        tuesday: { start: '09:00', end: '21:00', closed: true },
+        wednesday: { start: '09:00', end: '21:00', closed: true },
+        thursday: { start: '09:00', end: '21:00', closed: true },
+        friday: { start: '09:00', end: '21:00', closed: true },
+        saturday: { start: '09:00', end: '21:00', closed: true },
+        sunday: { start: '09:00', end: '21:00', closed: true },
+      },
     },
   ];
 
@@ -159,7 +222,12 @@ export function FacilityManagementPage() {
                       <td className="facility-members">{facility.memberCount}명</td>
                       <td className="facility-revenue">{(facility.revenue / 10000).toLocaleString()}만원</td>
                       <td className="facility-actions">
-                        <button className="btn-outline btn-sm">상세보기</button>
+                        <button 
+                          className="btn-outline btn-sm"
+                          onClick={() => handleOpenDetailModal(facility)}
+                        >
+                          상세보기
+                        </button>
                         <button className="btn-outline btn-sm">관리</button>
                       </td>
                     </tr>
@@ -173,6 +241,11 @@ export function FacilityManagementPage() {
 
       {/* 시설 등록 모달 */}
       {isRegisterModalOpen && <FacilityRegisterModal onClose={handleCloseRegisterModal} />}
+      
+      {/* 시설 상세보기 모달 */}
+      {isDetailModalOpen && selectedFacility && (
+        <FacilityDetailModal facility={selectedFacility} onClose={handleCloseDetailModal} />
+      )}
     </div>
   );
 }
@@ -535,6 +608,160 @@ function FacilityRegisterModal({ onClose }: { onClose: () => void }) {
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  );
+}
+
+// 시설 상세보기 모달 컴포넌트
+function FacilityDetailModal({ facility, onClose }: { facility: any; onClose: () => void }) {
+  
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content facility-detail-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>{facility.name} 상세정보</h2>
+          <button onClick={onClose} className="modal-close-btn">×</button>
+        </div>
+
+        <div className="modal-body">
+          {/* 연결된 사업자 정보 */}
+          <div className="form-section">
+            <h3 className="form-section-title">연결된 사업자</h3>
+            <div className="selected-business">
+              <div className="business-info">
+                <h4>{facility.business.name}</h4>
+                <p>사업자번호: {facility.business.businessNumber}</p>
+                <p>대표자: {facility.business.representative}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* 매장 정보 */}
+          <div className="form-section">
+            <h3 className="form-section-title">매장 정보</h3>
+            
+            <div className="detail-grid">
+              <div className="detail-item">
+                <label className="detail-label">매장명</label>
+                <div className="detail-value">{facility.name}</div>
+              </div>
+
+              <div className="detail-item">
+                <label className="detail-label">카테고리</label>
+                <div className="detail-value">{facility.category}</div>
+              </div>
+
+              <div className="detail-item">
+                <label className="detail-label">매장주소</label>
+                <div className="detail-value">{facility.address}</div>
+              </div>
+
+              {facility.detailAddress && (
+                <div className="detail-item">
+                  <label className="detail-label">상세주소</label>
+                  <div className="detail-value">{facility.detailAddress}</div>
+                </div>
+              )}
+
+              <div className="detail-item">
+                <label className="detail-label">운영상태</label>
+                <div className="detail-value">
+                  <span className={`facility-status ${facility.status === '운영중' ? 'active' : 'inactive'}`}>
+                    {facility.status}
+                  </span>
+                </div>
+              </div>
+
+              <div className="detail-item">
+                <label className="detail-label">회원 수</label>
+                <div className="detail-value">{facility.memberCount}명</div>
+              </div>
+
+              <div className="detail-item">
+                <label className="detail-label">이번 달 매출</label>
+                <div className="detail-value">{(facility.revenue / 10000).toLocaleString()}만원</div>
+              </div>
+            </div>
+
+            {facility.description && (
+              <div className="detail-item full-width">
+                <label className="detail-label">매장소개</label>
+                <div className="detail-value description">{facility.description}</div>
+              </div>
+            )}
+          </div>
+
+          {/* 매장 사진 */}
+          {facility.photos && facility.photos.length > 0 && (
+            <div className="form-section">
+              <h3 className="form-section-title">매장 사진</h3>
+              <div className="photo-grid">
+                {facility.photos.map((photo: string, index: number) => (
+                  <div key={index} className="photo-placeholder">
+                    <span>📷</span>
+                    <p>{photo}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* 회원권 정보 */}
+          {facility.membershipCards && facility.membershipCards.length > 0 && (
+            <div className="form-section">
+              <h3 className="form-section-title">회원권 정보</h3>
+              <div className="photo-grid">
+                {facility.membershipCards.map((card: string, index: number) => (
+                  <div key={index} className="photo-placeholder">
+                    <span>🎫</span>
+                    <p>{card}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* 운영시간 */}
+          <div className="form-section">
+            <h3 className="form-section-title">운영시간</h3>
+            <div className="operating-hours-view">
+              {Object.entries(facility.operatingHours).map(([day, hours]: [string, any]) => (
+                <div key={day} className="operating-hour-row">
+                  <div className="day-label">
+                    {day === 'monday' ? '월요일' :
+                     day === 'tuesday' ? '화요일' :
+                     day === 'wednesday' ? '수요일' :
+                     day === 'thursday' ? '목요일' :
+                     day === 'friday' ? '금요일' :
+                     day === 'saturday' ? '토요일' : '일요일'}
+                  </div>
+                  <div className="hours-display">
+                    {hours.closed ? (
+                      <span className="closed-text">휴무</span>
+                    ) : (
+                      <span className="hours-text">{hours.start} ~ {hours.end}</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 공지사항 */}
+          {facility.notice && (
+            <div className="form-section">
+              <h3 className="form-section-title">공지사항</h3>
+              <div className="detail-value notice">{facility.notice}</div>
+            </div>
+          )}
+        </div>
+
+        <div className="modal-footer">
+          <button onClick={onClose} className="btn-primary">
+            닫기
+          </button>
+        </div>
       </div>
     </div>
   );
