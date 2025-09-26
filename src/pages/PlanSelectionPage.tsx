@@ -9,7 +9,7 @@ export function PlanSelectionPage() {
   const navigate = useNavigate();
   const { state, setSelectedPlans, setCurrentStep } = useContract();
   
-  const [selectedPlans, setLocalSelectedPlans] = useState<SelectedPlan[]>(state.selectedPlans);
+  const [localSelectedPlans, setLocalSelectedPlans] = useState<SelectedPlan[]>(state.selectedPlans);
   const [billingType, setBillingType] = useState<'monthly' | 'yearly'>('yearly');
   const [isPartner, setIsPartner] = useState(false);
 
@@ -20,7 +20,7 @@ export function PlanSelectionPage() {
 
     if (isSelected) {
       // 기본 플랜은 단일 선택이므로 기존 기본 플랜들을 모두 제거하고 새로운 플랜 추가
-      const newPlans = selectedPlans.filter(p => {
+      const newPlans = localSelectedPlans.filter(p => {
         const existingPlan = PLANS.find(existing => existing.id === p.planId);
         return existingPlan?.category !== 'main';
       });
@@ -100,7 +100,7 @@ export function PlanSelectionPage() {
 
   // 과금 주기 변경 시 선택된 플랜들의 가격 업데이트
   useEffect(() => {
-    const updatedPlans = selectedPlans.map(selectedPlan => {
+    const updatedPlans = localSelectedPlans.map(selectedPlan => {
       const plan = PLANS.find(p => p.id === selectedPlan.planId);
       if (!plan) return selectedPlan;
 
@@ -123,27 +123,27 @@ export function PlanSelectionPage() {
     });
 
     setLocalSelectedPlans(updatedPlans);
-  }, [billingType, isPartner, selectedPlans]);
+  }, [billingType, isPartner, localSelectedPlans]);
 
   // 자동 제휴가 계산 로직
   useEffect(() => {
     // 매출솔루션(main 카테고리) 플랜이 하나라도 선택되어 있으면 제휴가
-    const hasMainPlan = selectedPlans.some((plan: SelectedPlan) => {
+    const hasMainPlan = localSelectedPlans.some((plan: SelectedPlan) => {
       const planInfo = PLANS.find(p => p.id === plan.planId);
       return planInfo?.category === 'main';
     });
     setIsPartner(hasMainPlan);
-  }, [selectedPlans]);
+  }, [localSelectedPlans]);
 
   const handleSubmit = () => {
     // 선택된 플랜을 그대로 저장 (로컬 상태 기준)
-    setSelectedPlans(selectedPlans);
+    setSelectedPlans(localSelectedPlans);
     setCurrentStep(5);
     navigate(ROUTES.PAYMENT);
   };
 
   const handleStepClick = (step: number) => {
-    setSelectedPlans(selectedPlans);
+    setSelectedPlans(localSelectedPlans);
     setCurrentStep(step);
 
     switch (step) {
@@ -162,17 +162,17 @@ export function PlanSelectionPage() {
   };
 
   const handlePrevious = () => {
-    setSelectedPlans(selectedPlans);
+    setSelectedPlans(localSelectedPlans);
     setCurrentStep(3);
     navigate(ROUTES.REPRESENTATIVE_INFO);
   };
 
   // 총 금액 계산 (로컬 상태 기준)
-  const totalAmount = selectedPlans.reduce((sum: number, plan: SelectedPlan) => sum + plan.price, 0);
+  const totalAmount = localSelectedPlans.reduce((sum: number, plan: SelectedPlan) => sum + plan.price, 0);
 
   // 플랜이 선택되었는지 확인 (로컬 상태 기준)
   const isPlanSelected = (planId: string) => {
-    return selectedPlans.some((p: SelectedPlan) => p.planId === planId);
+    return localSelectedPlans.some((p: SelectedPlan) => p.planId === planId);
   };
 
   // 플랜 가격 계산
@@ -316,14 +316,14 @@ export function PlanSelectionPage() {
         <div className="form-section">
           <h2 className="section-title">선택된 플랜</h2>
           <div className="selected-summary">
-            {selectedPlans.length > 0 ? (
+            {localSelectedPlans.length > 0 ? (
               <div className="selected-plans">
                 <div className="partner-status">
                   <span className={`partner-badge ${isPartner ? 'partner' : 'non-partner'}`}>
                     {isPartner ? '🤝 제휴가 적용' : '🏢 비제휴가 적용'}
                   </span>
                 </div>
-                {selectedPlans.map((plan: SelectedPlan) => (
+                {localSelectedPlans.map((plan: SelectedPlan) => (
                   <div key={plan.planId} className="selected-plan-item">
                     <span className="plan-name">{plan.planName}</span>
                     <span className="plan-price">{plan.price.toLocaleString()}원</span>
