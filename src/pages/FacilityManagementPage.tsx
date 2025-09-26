@@ -114,48 +114,6 @@ export function FacilityManagementPage() {
             </div>
           </section>
 
-          {/* 빠른 액션 */}
-          <section className="actions-section">
-            <h2 className="section-title">시설 관리</h2>
-            <div className="action-cards">
-              <div className="action-card primary">
-                <div className="action-content">
-                  <h3 className="action-title">새 시설 등록</h3>
-                  <p className="action-description">
-                    새로운 체육시설을 등록하고 관리를 시작하세요
-                  </p>
-                </div>
-              </div>
-
-              <div className="action-card">
-                <div className="action-content">
-                  <h3 className="action-title">회원 관리</h3>
-                  <p className="action-description">
-                    시설별 회원 정보를 확인하고 관리하세요
-                  </p>
-                </div>
-              </div>
-
-              <div className="action-card">
-                <div className="action-content">
-                  <h3 className="action-title">매출 분석</h3>
-                  <p className="action-description">
-                    시설별 매출 현황과 통계를 분석하세요
-                  </p>
-                </div>
-              </div>
-
-              <div className="action-card">
-                <div className="action-content">
-                  <h3 className="action-title">설정 관리</h3>
-                  <p className="action-description">
-                    시설별 운영 설정과 옵션을 관리하세요
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
-
           {/* 시설 목록 */}
           <section className="facilities-section">
             <h2 className="section-title">시설 목록</h2>
