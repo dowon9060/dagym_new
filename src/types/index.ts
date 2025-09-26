@@ -18,9 +18,19 @@ export interface BusinessInfo {
 
 // 정산 계좌 정보 타입
 export interface AccountInfo {
-  bankName: string;
-  accountNumber: string;
-  accountHolder: string;
+  // 결제 방법
+  paymentType?: 'card' | 'account';
+  
+  // 카드 결제 정보
+  cardNumber?: string;
+  expiryDate?: string;
+  cardPassword?: string;
+  cardHolderName?: string;
+  
+  // 계좌 결제 정보
+  bankName?: string;
+  accountNumber?: string;
+  accountHolder?: string;
   bankbookPhoto?: File | string;
 }
 

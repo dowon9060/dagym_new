@@ -2319,6 +2319,54 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
+/* 결제 방법 선택 */
+.payment-type-selection {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin-bottom: var(--space-2);
+}
+
+.payment-type-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  background: var(--bg-secondary);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  min-height: 120px;
+}
+
+.payment-type-card:hover {
+  background: var(--bg-tertiary);
+  border-color: var(--border-medium);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.payment-type-card.selected {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.payment-type-icon {
+  font-size: 2rem;
+  margin-bottom: var(--space-3);
+}
+
+.payment-type-label {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  text-align: center;
+}
+
 .status-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
