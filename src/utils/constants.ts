@@ -62,7 +62,7 @@ export const PLANS: Plan[] = [
     name: '무료플랜',
     monthlyPrice: 0,
     yearlyPrice: 0,
-    isRequired: true,
+    isRequired: false,
     category: 'main',
   },
   {

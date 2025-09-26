@@ -332,29 +332,21 @@ export function PlanSelectionPage() {
                 {PLANS.filter(plan => plan.category === 'main').map(plan => {
                   const isSelected = isPlanSelected(plan.id);
                   const price = getPlanPrice(plan);
-                  const isRequired = plan.isRequired;
 
                   return (
                     <div 
                       key={plan.id} 
-                      className={`plan-card ${isSelected ? 'selected' : ''} ${isRequired ? 'required' : ''} clickable`}
+                      className={`plan-card ${isSelected ? 'selected' : ''} clickable`}
                       onClick={() => handlePlanToggle(plan.id, !isSelected)}
                     >
                       <div className="plan-header">
                         <h3 className="plan-name">{plan.name}</h3>
-                        {isRequired && <span className="required-badge">필수</span>}
                       </div>
                       
                       <div className="plan-price">
                         <span className="price">{price.toLocaleString()}원</span>
                         <span className="period">/ {billingType === 'yearly' ? '년' : '월'}</span>
                       </div>
-
-                      {isRequired && (
-                        <div className="plan-status">
-                          <span className="status-text required">🎯 기본 포함</span>
-                        </div>
-                      )}
                     </div>
                   );
                 })}
