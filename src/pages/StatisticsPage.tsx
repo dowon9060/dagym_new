@@ -88,29 +88,24 @@ export function StatisticsPage() {
   }
 
   return (
-    <div className="statistics-page">
+    <div className="dashboard-page">
       {/* 헤더 */}
-      <header className="statistics-header">
+      <header className="dashboard-header">
         <div className="header-content">
           <div className="header-left">
-            <button 
-              onClick={() => navigate(ROUTES.DASHBOARD)} 
-              className="back-button"
-            >
-              ← 돌아가기
-            </button>
-            <h1 className="page-title">통계 보기</h1>
+            <h1 className="dashboard-title">통계 보기</h1>
+            <p className="welcome-message">계약 및 매출 현황을 확인하세요</p>
           </div>
           <div className="header-right">
             <button
               onClick={() => navigate(ROUTES.DASHBOARD)}
-              className="btn-secondary"
+              className="back-button"
             >
-              대시보드
+              대시보드로 돌아가기
             </button>
             <button
               onClick={handleLogout}
-              className="btn-text"
+              className="logout-button"
             >
               로그아웃
             </button>
@@ -119,82 +114,76 @@ export function StatisticsPage() {
       </header>
 
       {/* 메인 콘텐츠 */}
-      <main className="statistics-main">
-        <div className="container">
-          {/* 총 통계 요약 */}
-          <section className="total-stats-section">
+      <main className="dashboard-main">
+        <div className="dashboard-container">
+          
+          {/* 전체 현황 */}
+          <section className="stats-section">
             <h2 className="section-title">전체 현황</h2>
-            <div className="total-stats-grid">
-              <div className="total-stat-card">
-                <div className="stat-value">{totalStats.totalContracts}</div>
-                <div className="stat-label">총 계약</div>
+            <div className="stats-grid">
+              <div className="stat-card">
+                <div className="stat-content">
+                  <div className="stat-value">{totalStats.totalContracts}</div>
+                  <div className="stat-label">총 계약</div>
+                </div>
               </div>
-              <div className="total-stat-card">
-                <div className="stat-value">{totalStats.totalRevenue.toLocaleString()}원</div>
-                <div className="stat-label">총 매출</div>
+              <div className="stat-card">
+                <div className="stat-content">
+                  <div className="stat-value">{(totalStats.totalRevenue / 10000).toLocaleString()}만원</div>
+                  <div className="stat-label">총 매출</div>
+                </div>
               </div>
-              <div className="total-stat-card">
-                <div className="stat-value">{totalStats.avgContractValue.toLocaleString()}원</div>
-                <div className="stat-label">평균 계약금액</div>
+              <div className="stat-card">
+                <div className="stat-content">
+                  <div className="stat-value">{(totalStats.avgContractValue / 10000).toLocaleString()}만원</div>
+                  <div className="stat-label">평균 계약금액</div>
+                </div>
               </div>
-              <div className="total-stat-card">
-                <div className="stat-value">+{totalStats.monthlyGrowth}%</div>
-                <div className="stat-label">월간 성장률</div>
+              <div className="stat-card">
+                <div className="stat-content">
+                  <div className="stat-value">+{totalStats.monthlyGrowth}%</div>
+                  <div className="stat-label">월간 성장률</div>
+                </div>
               </div>
             </div>
           </section>
 
-          {/* 월별 통계 */}
-          <section className="monthly-stats-section">
-            <h2 className="section-title">월별 통계</h2>
-            <div className="monthly-stats-table">
-              <table className="stats-table">
-                <thead>
-                  <tr>
-                    <th>월</th>
-                    <th>계약 수</th>
-                    <th>매출</th>
-                    <th>전월 대비</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {monthlyStats.map((stat, index) => {
-                    const prevStat = index > 0 ? monthlyStats[index - 1] : null;
-                    const growth = prevStat 
-                      ? ((stat.revenue - prevStat.revenue) / prevStat.revenue * 100).toFixed(1)
-                      : '0';
-                    
-                    return (
-                      <tr key={stat.month}>
-                        <td>{formatMonth(stat.month)}</td>
-                        <td>{stat.contracts}건</td>
-                        <td>{stat.revenue.toLocaleString()}원</td>
-                        <td className={`growth ${parseFloat(growth) >= 0 ? 'positive' : 'negative'}`}>
-                          {parseFloat(growth) >= 0 ? '+' : ''}{growth}%
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          </section>
-
-          {/* 상태별 통계 */}
-          <section className="status-stats-section">
-            <h2 className="section-title">계약 상태별 분포</h2>
-            <div className="status-stats-grid">
-              {statusStats.map(stat => (
-                <div key={stat.status} className="status-stat-card">
-                  <div className="status-header">
-                    <span className="status-name">{stat.status}</span>
-                    <span className="status-count">{stat.count}건</span>
+          {/* 월별 현황 */}
+          <section className="recent-section">
+            <h2 className="section-title">최근 6개월 현황</h2>
+            <div className="monthly-list">
+              {monthlyStats.map((stat, index) => {
+                const prevStat = index > 0 ? monthlyStats[index - 1] : null;
+                const growth = prevStat 
+                  ? ((stat.revenue - prevStat.revenue) / prevStat.revenue * 100).toFixed(1)
+                  : '0';
+                
+                return (
+                  <div key={stat.month} className="monthly-item">
+                    <div className="monthly-info">
+                      <div className="monthly-month">{formatMonth(stat.month)}</div>
+                      <div className="monthly-details">
+                        계약 {stat.contracts}건 · 매출 {(stat.revenue / 10000).toLocaleString()}만원
+                      </div>
+                    </div>
+                    <div className={`monthly-growth ${parseFloat(growth) >= 0 ? 'positive' : 'negative'}`}>
+                      {parseFloat(growth) >= 0 ? '+' : ''}{growth}%
+                    </div>
                   </div>
-                  <div className="status-bar">
-                    <div 
-                      className="status-progress" 
-                      style={{ width: `${stat.percentage}%` }}
-                    ></div>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* 계약 상태 */}
+          <section className="contract-status-section">
+            <h2 className="section-title">계약 상태 현황</h2>
+            <div className="status-grid">
+              {statusStats.map(stat => (
+                <div key={stat.status} className="status-card">
+                  <div className="status-info">
+                    <div className="status-name">{stat.status}</div>
+                    <div className="status-count">{stat.count}건</div>
                   </div>
                   <div className="status-percentage">{stat.percentage}%</div>
                 </div>
@@ -202,16 +191,6 @@ export function StatisticsPage() {
             </div>
           </section>
 
-          {/* 차트 영역 (향후 확장) */}
-          <section className="charts-section">
-            <h2 className="section-title">성과 트렌드</h2>
-            <div className="chart-placeholder">
-              <div className="placeholder-content">
-                <h3>차트가 곧 추가될 예정입니다</h3>
-                <p>월별 계약 수 및 매출 트렌드를 시각적으로 확인할 수 있습니다.</p>
-              </div>
-            </div>
-          </section>
         </div>
       </main>
     </div>
