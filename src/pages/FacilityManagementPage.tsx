@@ -39,7 +39,7 @@ export function FacilityManagementPage() {
       id: 1,
       name: '강남점',
       type: '헬스장',
-      status: '운영중',
+      status: '노출중',
       memberCount: 234,
       revenue: 12500000,
       business: { name: '㈜다짐피트니스', businessNumber: '123-45-67890', representative: '김대표' },
@@ -73,7 +73,7 @@ export function FacilityManagementPage() {
       id: 2,
       name: '홍대점',
       type: '크로스핏',
-      status: '운영중',
+      status: '노출중',
       memberCount: 156,
       revenue: 8900000,
       business: { name: '헬스케어㈜', businessNumber: '234-56-78901', representative: '이대표' },
@@ -106,7 +106,7 @@ export function FacilityManagementPage() {
       id: 3,
       name: '잠실점',
       type: '필라테스',
-      status: '휴업',
+      status: '노출안됨',
       memberCount: 89,
       revenue: 5600000,
       business: { name: '스포츠센터㈜', businessNumber: '345-67-89012', representative: '박대표' },
@@ -203,8 +203,8 @@ export function FacilityManagementPage() {
               </div>
               <div className="stat-card">
                 <div className="stat-content">
-                  <div className="stat-number">{facilities.filter(f => f.status === '운영중').length}</div>
-                  <div className="stat-label">운영중 시설</div>
+                  <div className="stat-number">{facilities.filter(f => f.status === '노출중').length}</div>
+                  <div className="stat-label">노출중 시설</div>
                 </div>
               </div>
             </div>
@@ -227,7 +227,7 @@ export function FacilityManagementPage() {
                   <tr>
                     <th>시설명</th>
                     <th>타입</th>
-                    <th>운영상태</th>
+                    <th>노출상태</th>
                     <th>회원 수</th>
                     <th>이번 달 매출</th>
                   </tr>
@@ -242,7 +242,7 @@ export function FacilityManagementPage() {
                       <td className="facility-name">{facility.name}</td>
                       <td className="facility-type">{facility.type}</td>
                       <td>
-                        <span className={`facility-status ${facility.status === '운영중' ? 'active' : 'inactive'}`}>
+                        <span className={`facility-status ${facility.status === '노출중' ? 'active' : 'inactive'}`}>
                           {facility.status}
                         </span>
                       </td>
@@ -795,9 +795,9 @@ function FacilityDetailModal({ facility, onClose }: { facility: any; onClose: ()
               )}
 
               <div className="detail-item">
-                <label className="detail-label">운영상태</label>
+                <label className="detail-label">노출상태</label>
                 <div className="detail-value">
-                  <span className={`facility-status ${facility.status === '운영중' ? 'active' : 'inactive'}`}>
+                  <span className={`facility-status ${facility.status === '노출중' ? 'active' : 'inactive'}`}>
                     {facility.status}
                   </span>
                 </div>
