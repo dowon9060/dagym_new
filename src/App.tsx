@@ -13,6 +13,7 @@ import { ContractListPage } from './pages/ContractListPage';
 import { ContractDetailPage } from './pages/ContractDetailPage';
 import { StatisticsPage } from './pages/StatisticsPage';
 import { ClientContractPage } from './pages/ClientContractPage';
+import { FacilityManagementPage } from './pages/FacilityManagementPage';
 import { ROUTES } from './utils/constants';
 import './App.css';
 
@@ -105,6 +106,15 @@ function App() {
                     element={
                       <ProtectedRoute fallback={<Navigate to={ROUTES.LOGIN} />}>
                         <StatisticsPage />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  <Route
+                    path={ROUTES.FACILITY_MANAGEMENT}
+                    element={
+                      <ProtectedRoute fallback={<Navigate to={ROUTES.LOGIN} />}>
+                        <FacilityManagementPage />
                       </ProtectedRoute>
                     }
                   />

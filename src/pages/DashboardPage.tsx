@@ -15,6 +15,10 @@ export function DashboardPage() {
     navigate(ROUTES.CONTRACT_LIST);
   };
 
+  const handleFacilityManagement = () => {
+    navigate(ROUTES.FACILITY_MANAGEMENT);
+  };
+
   const handleLogout = () => {
     logout();
     navigate(ROUTES.LOGIN);
@@ -66,6 +70,18 @@ export function DashboardPage() {
                       <h3 className="action-title">새 계약서 작성</h3>
                       <p className="action-description">
                         새로운 계약서를 작성하고 고객에게 발송하세요
+                      </p>
+                    </div>
+                  </div>
+
+                  <div 
+                    className="action-card"
+                    onClick={handleFacilityManagement}
+                  >
+                    <div className="action-content">
+                      <h3 className="action-title">시설관리</h3>
+                      <p className="action-description">
+                        체육시설 현황과 회원 정보를 관리하세요
                       </p>
                     </div>
                   </div>

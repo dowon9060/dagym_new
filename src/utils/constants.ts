@@ -17,6 +17,7 @@ export const ROUTES = {
   PLAN_SELECTION: '/contract/new/plans',
   PAYMENT: '/contract/new/payment',
   STATISTICS: '/statistics',
+  FACILITY_MANAGEMENT: '/facility',
 } as const;
 
 // 은행 목록
