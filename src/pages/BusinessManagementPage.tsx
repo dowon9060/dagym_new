@@ -43,6 +43,7 @@ export function BusinessManagementPage() {
       phoneNumber: '010-1234-5678',
       registrationDate: '2024-01-15 14:30:00',
       status: '활성',
+      contractStatus: 'contracted', // 'registered', 'contracted', 'uncontracted'
       contractCount: 3,
       facilityCount: 2,
     },
@@ -58,6 +59,7 @@ export function BusinessManagementPage() {
       phoneNumber: '010-2345-6789',
       registrationDate: '2024-01-10 09:15:00',
       status: '활성',
+      contractStatus: 'registered', // 등록완료 (아직 계약 안됨)
       contractCount: 1,
       facilityCount: 1,
     },
@@ -73,6 +75,7 @@ export function BusinessManagementPage() {
       phoneNumber: '010-3456-7890',
       registrationDate: '2024-01-05 16:45:00',
       status: '비활성',
+      contractStatus: 'uncontracted', // 미계약
       contractCount: 0,
       facilityCount: 1,
     },
@@ -88,6 +91,7 @@ export function BusinessManagementPage() {
       phoneNumber: '010-4567-8901',
       registrationDate: '2024-01-20 11:20:00',
       status: '활성',
+      contractStatus: 'contracted', // 계약완료
       contractCount: 2,
       facilityCount: 3,
     },
@@ -95,12 +99,14 @@ export function BusinessManagementPage() {
 
   // 통계 계산
   const totalBusinesses = businesses.length;
-  const activeBusinesses = businesses.filter(b => b.status === '활성').length;
-  const totalContracts = businesses.reduce((sum, b) => sum + b.contractCount, 0);
-  const totalFacilities = businesses.reduce((sum, b) => sum + b.facilityCount, 0);
+  const registeredCount = businesses.filter(b => b.contractStatus === 'registered').length;
+  const contractedCount = businesses.filter(b => b.contractStatus === 'contracted').length;
+  const uncontractedCount = businesses.filter(b => b.contractStatus === 'uncontracted').length;
 
   const [selectedBusiness, setSelectedBusiness] = useState<any>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [filterStatus, setFilterStatus] = useState<string>('all'); // 'all', 'registered', 'contracted', 'uncontracted'
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   const handleOpenDetailModal = (business: any) => {
     setSelectedBusiness(business);
@@ -111,6 +117,30 @@ export function BusinessManagementPage() {
     setSelectedBusiness(null);
     setIsDetailModalOpen(false);
   };
+
+  // 통계 카드 클릭 핸들러
+  const handleStatCardClick = (status: string) => {
+    setFilterStatus(status);
+  };
+
+  // 검색어 변경 핸들러
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  // 필터링된 사업자 목록
+  const filteredBusinesses = businesses.filter(business => {
+    // 상태 필터링
+    const statusMatch = filterStatus === 'all' || business.contractStatus === filterStatus;
+    
+    // 검색어 필터링 (사업자명, 사업자번호, 대표자명)
+    const searchMatch = searchTerm === '' || 
+      business.businessName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      business.businessNumber.includes(searchTerm) ||
+      business.representativeName.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    return statusMatch && searchMatch;
+  });
 
   const formatDateTime = (dateTime: string) => {
     const date = new Date(dateTime);
@@ -159,28 +189,40 @@ export function BusinessManagementPage() {
           <section className="stats-section">
             <h2 className="section-title">사업자 현황</h2>
             <div className="stats-grid">
-              <div className="stat-card">
+              <div 
+                className={`stat-card clickable ${filterStatus === 'all' ? 'active' : ''}`}
+                onClick={() => handleStatCardClick('all')}
+              >
                 <div className="stat-content">
                   <div className="stat-number">{totalBusinesses}</div>
                   <div className="stat-label">총 사업자</div>
                 </div>
               </div>
-              <div className="stat-card">
+              <div 
+                className={`stat-card clickable ${filterStatus === 'registered' ? 'active' : ''}`}
+                onClick={() => handleStatCardClick('registered')}
+              >
                 <div className="stat-content">
-                  <div className="stat-number">{activeBusinesses}</div>
-                  <div className="stat-label">활성 사업자</div>
+                  <div className="stat-number">{registeredCount}</div>
+                  <div className="stat-label">등록완료</div>
                 </div>
               </div>
-              <div className="stat-card">
+              <div 
+                className={`stat-card clickable ${filterStatus === 'contracted' ? 'active' : ''}`}
+                onClick={() => handleStatCardClick('contracted')}
+              >
                 <div className="stat-content">
-                  <div className="stat-number">{totalContracts}</div>
-                  <div className="stat-label">총 계약 수</div>
+                  <div className="stat-number">{contractedCount}</div>
+                  <div className="stat-label">계약완료</div>
                 </div>
               </div>
-              <div className="stat-card">
+              <div 
+                className={`stat-card clickable ${filterStatus === 'uncontracted' ? 'active' : ''}`}
+                onClick={() => handleStatCardClick('uncontracted')}
+              >
                 <div className="stat-content">
-                  <div className="stat-number">{totalFacilities}</div>
-                  <div className="stat-label">총 시설 수</div>
+                  <div className="stat-number">{uncontractedCount}</div>
+                  <div className="stat-label">미계약</div>
                 </div>
               </div>
             </div>
@@ -190,6 +232,23 @@ export function BusinessManagementPage() {
           <section className="businesses-section">
             <div className="section-header">
               <h2 className="section-title">사업자 목록</h2>
+              <div className="search-container">
+                <input
+                  type="text"
+                  placeholder="상호명, 사업자번호, 대표자명으로 검색..."
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                  className="search-input"
+                />
+                {searchTerm && (
+                  <button
+                    onClick={() => setSearchTerm('')}
+                    className="search-clear-btn"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
             </div>
             <div className="businesses-table-container">
               <table className="businesses-table">
@@ -202,23 +261,34 @@ export function BusinessManagementPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {businesses.map((business) => (
-                    <tr 
-                      key={business.id} 
-                      className="business-row clickable-row"
-                      onClick={() => handleOpenDetailModal(business)}
-                    >
-                      <td className="business-name">{business.businessName}</td>
-                      <td className="business-number">{business.businessNumber}</td>
-                      <td className="representative-name">{business.representativeName}</td>
-                      <td className="business-address">
-                        {business.businessAddress}
-                        {business.businessDetailAddress && (
-                          <span className="detail-address-inline"> {business.businessDetailAddress}</span>
-                        )}
+                  {filteredBusinesses.length > 0 ? (
+                    filteredBusinesses.map((business) => (
+                      <tr 
+                        key={business.id} 
+                        className="business-row clickable-row"
+                        onClick={() => handleOpenDetailModal(business)}
+                      >
+                        <td className="business-name">{business.businessName}</td>
+                        <td className="business-number">{business.businessNumber}</td>
+                        <td className="representative-name">{business.representativeName}</td>
+                        <td className="business-address">
+                          {business.businessAddress}
+                          {business.businessDetailAddress && (
+                            <span className="detail-address-inline"> {business.businessDetailAddress}</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={4} className="no-results">
+                        {searchTerm ? 
+                          `"${searchTerm}" 검색 결과가 없습니다.` : 
+                          '해당 조건의 사업자가 없습니다.'
+                        }
                       </td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
               </table>
             </div>
@@ -323,7 +393,7 @@ function BusinessDetailModal({ business, onClose }: { business: any; onClose: ()
                   <div className="input-field readonly">{business.businessName}</div>
                 )}
                 {errors.businessName && (
-                  <span className="error-message">{errors.businessName.message}</span>
+                  <span className="error-message">{errors.businessName.message as string}</span>
                 )}
               </div>
 
@@ -350,7 +420,7 @@ function BusinessDetailModal({ business, onClose }: { business: any; onClose: ()
                   <div className="input-field readonly">{business.businessNumber}</div>
                 )}
                 {errors.businessNumber && (
-                  <span className="error-message">{errors.businessNumber.message}</span>
+                  <span className="error-message">{errors.businessNumber.message as string}</span>
                 )}
               </div>
 
@@ -373,7 +443,7 @@ function BusinessDetailModal({ business, onClose }: { business: any; onClose: ()
                   <div className="input-field readonly">{business.representativeName}</div>
                 )}
                 {errors.representativeName && (
-                  <span className="error-message">{errors.representativeName.message}</span>
+                  <span className="error-message">{errors.representativeName.message as string}</span>
                 )}
               </div>
 
@@ -396,7 +466,7 @@ function BusinessDetailModal({ business, onClose }: { business: any; onClose: ()
                   <div className="input-field readonly">{business.businessType}</div>
                 )}
                 {errors.businessType && (
-                  <span className="error-message">{errors.businessType.message}</span>
+                  <span className="error-message">{errors.businessType.message as string}</span>
                 )}
               </div>
 
@@ -426,7 +496,7 @@ function BusinessDetailModal({ business, onClose }: { business: any; onClose: ()
                   <div className="input-field readonly">{business.businessCategory}</div>
                 )}
                 {errors.businessCategory && (
-                  <span className="error-message">{errors.businessCategory.message}</span>
+                  <span className="error-message">{errors.businessCategory.message as string}</span>
                 )}
               </div>
 
@@ -466,7 +536,7 @@ function BusinessDetailModal({ business, onClose }: { business: any; onClose: ()
                   <div className="input-field readonly">{business.businessAddress}</div>
                 )}
                 {errors.businessAddress && (
-                  <span className="error-message">{errors.businessAddress.message}</span>
+                  <span className="error-message">{errors.businessAddress.message as string}</span>
                 )}
               </div>
 

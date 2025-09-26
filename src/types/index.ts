@@ -9,6 +9,11 @@ export interface BusinessInfo {
   businessCategory: string;
   businessRegistrationCert?: File | string;
   sportsLicenseCert?: File | string;
+  // 정산계좌 정보
+  bankName?: string;
+  accountNumber?: string;
+  accountHolder?: string;
+  bankBookImage?: File | string;
 }
 
 // 정산 계좌 정보 타입

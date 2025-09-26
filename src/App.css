@@ -2124,6 +2124,32 @@ body {
   box-shadow: var(--shadow-md);
 }
 
+/* 클릭 가능한 통계 카드 */
+.stat-card.clickable {
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.stat-card.clickable:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary);
+}
+
+.stat-card.clickable.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.stat-card.clickable.active .stat-value {
+  color: white;
+}
+
+.stat-card.clickable.active .stat-label {
+  color: rgba(255, 255, 255, 0.9);
+}
+
 .stat-content {
   display: flex;
   flex-direction: column;
@@ -2805,6 +2831,64 @@ body {
   margin-bottom: var(--space-8);
 }
 
+/* 섹션 헤더 */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-6);
+  gap: var(--space-4);
+}
+
+/* 검색 컨테이너 */
+.search-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 300px;
+}
+
+.search-input {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-sm);
+  background: var(--bg-card);
+  transition: all var(--transition-normal);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.search-clear-btn {
+  position: absolute;
+  right: var(--space-3);
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.search-clear-btn:hover {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+/* 검색 결과 없음 */
+.no-results {
+  text-align: center;
+  padding: var(--space-8);
+  color: var(--text-muted);
+  font-style: italic;
+}
+
 /* 사업자 테이블 */
 .businesses-table-container {
   background: white;
@@ -2951,6 +3035,108 @@ body {
   color: var(--text-muted);
   margin-top: var(--space-1);
   text-align: center;
+}
+
+/* 새로운 파일 업로드 박스 (높이 20% 줄임) */
+.file-upload-box {
+  border: 2px dashed var(--border-light);
+  border-radius: var(--radius-lg);
+  background: var(--bg-secondary);
+  transition: all var(--transition-normal);
+  overflow: hidden;
+}
+
+.file-upload-box:hover {
+  border-color: var(--primary);
+  background: var(--bg-tertiary);
+}
+
+.file-upload-content {
+  padding: var(--space-4);
+  min-height: 80px; /* 기존보다 20% 줄인 높이 (원래 100px에서 80px) */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upload-placeholder {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+.file-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: var(--bg-card);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+}
+
+.file-name {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.remove-file-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: var(--space-1);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  margin-left: var(--space-2);
+}
+
+.remove-file-btn:hover {
+  background: var(--bg-secondary);
+  color: var(--error);
+}
+
+.upload-buttons {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--bg-tertiary);
+  border-top: 1px solid var(--border-light);
+}
+
+.upload-btn,
+.camera-btn {
+  flex: 1;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+}
+
+.upload-btn:hover,
+.camera-btn:hover {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.upload-btn:active,
+.camera-btn:active {
+  transform: translateY(0);
 }
 
 /* 뒤로가기 버튼 (사업자관리용) */
