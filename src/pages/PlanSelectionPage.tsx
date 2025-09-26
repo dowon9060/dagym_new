@@ -128,22 +128,22 @@ export function PlanSelectionPage() {
   // 자동 제휴가 계산 로직
   useEffect(() => {
     // 매출솔루션(main 카테고리) 플랜이 하나라도 선택되어 있으면 제휴가
-    const hasMainPlan = localSelectedPlans.some(plan => {
+    const hasMainPlan = selectedPlans.some((plan: SelectedPlan) => {
       const planInfo = PLANS.find(p => p.id === plan.planId);
       return planInfo?.category === 'main';
     });
     setIsPartner(hasMainPlan);
-  }, [localSelectedPlans]);
+  }, [selectedPlans]);
 
   const handleSubmit = () => {
     // 선택된 플랜을 그대로 저장 (로컬 상태 기준)
-    setSelectedPlans(localSelectedPlans);
+    setSelectedPlans(selectedPlans);
     setCurrentStep(5);
     navigate(ROUTES.PAYMENT);
   };
 
   const handleStepClick = (step: number) => {
-    setSelectedPlans(localSelectedPlans);
+    setSelectedPlans(selectedPlans);
     setCurrentStep(step);
 
     switch (step) {
@@ -162,17 +162,17 @@ export function PlanSelectionPage() {
   };
 
   const handlePrevious = () => {
-    setSelectedPlans(localSelectedPlans);
+    setSelectedPlans(selectedPlans);
     setCurrentStep(3);
     navigate(ROUTES.REPRESENTATIVE_INFO);
   };
 
   // 총 금액 계산 (로컬 상태 기준)
-  const totalAmount = localSelectedPlans.reduce((sum, plan) => sum + plan.price, 0);
+  const totalAmount = selectedPlans.reduce((sum: number, plan: SelectedPlan) => sum + plan.price, 0);
 
   // 플랜이 선택되었는지 확인 (로컬 상태 기준)
   const isPlanSelected = (planId: string) => {
-    return localSelectedPlans.some(p => p.planId === planId);
+    return selectedPlans.some((p: SelectedPlan) => p.planId === planId);
   };
 
   // 플랜 가격 계산
@@ -309,14 +309,14 @@ export function PlanSelectionPage() {
         <div className="form-section">
           <h2 className="section-title">선택된 플랜</h2>
           <div className="selected-summary">
-            {localSelectedPlans.length > 0 ? (
+            {selectedPlans.length > 0 ? (
               <div className="selected-plans">
                 <div className="partner-status">
                   <span className={`partner-badge ${isPartner ? 'partner' : 'non-partner'}`}>
                     {isPartner ? '🤝 제휴가 적용' : '🏢 비제휴가 적용'}
                   </span>
                 </div>
-                {localSelectedPlans.map(plan => (
+                {selectedPlans.map((plan: SelectedPlan) => (
                   <div key={plan.planId} className="selected-plan-item">
                     <span className="plan-name">{plan.planName}</span>
                     <span className="plan-price">{plan.price.toLocaleString()}원</span>
