@@ -85,8 +85,8 @@ export function PlanSelectionPage() {
       setLocalSelectedPlans(prev => {
         const filtered = prev.filter(p => p.planId !== planId);
         
-        // 다짐매니저를 제거하는 경우, 다른 부가서비스들도 모두 제거
-        if (planId === 'dagym-manager') {
+                // 다짐매니저를 제거하는 경우, 다른 부가서비스들도 모두 제거
+                if (planId === 'manager') {
           return filtered.filter(p => {
             const existingPlan = PLANS.find(existing => existing.id === p.planId);
             return existingPlan?.category !== 'addon';
@@ -125,25 +125,19 @@ export function PlanSelectionPage() {
     setLocalSelectedPlans(updatedPlans);
   }, [billingType, isPartner, selectedPlans]);
 
+  // 자동 제휴가 계산 로직
+  useEffect(() => {
+    // 매출솔루션(main 카테고리) 플랜이 하나라도 선택되어 있으면 제휴가
+    const hasMainPlan = selectedPlans.some(plan => {
+      const planInfo = PLANS.find(p => p.id === plan.planId);
+      return planInfo?.category === 'main';
+    });
+    setIsPartner(hasMainPlan);
+  }, [selectedPlans]);
+
   const handleSubmit = () => {
-    if (selectedPlans.length === 0) {
-      alert('최소 1개 이상의 플랜을 선택해주세요');
-      return;
-    }
-
-    // 무료플랜이 없으면 자동으로 추가
-    const hasFree = selectedPlans.some(p => p.planId === 'free');
-    const plansToSave = hasFree ? selectedPlans : [
-      {
-        planId: 'free',
-        planName: '무료플랜',
-        billingType: billingType as 'monthly' | 'yearly',
-        price: 0,
-      },
-      ...selectedPlans
-    ];
-
-    setSelectedPlans(plansToSave);
+    // 선택된 플랜을 그대로 저장 (무료플랜 자동 추가 제거)
+    setSelectedPlans(selectedPlans);
     setCurrentStep(5);
     navigate(ROUTES.PAYMENT);
   };
@@ -238,135 +232,76 @@ export function PlanSelectionPage() {
               </div>
             </div>
 
-            <div className="partner-type">
-              <label className="option-label">제휴 여부</label>
-              <div className="radio-group">
-                <label className="radio-button">
-                  <input
-                    type="radio"
-                    value="non-partner"
-                    checked={!isPartner}
-                    onChange={() => setIsPartner(false)}
-                  />
-                  비제휴가
-                </label>
-                <label className="radio-button">
-                  <input
-                    type="radio"
-                    value="partner"
-                    checked={isPartner}
-                    onChange={() => setIsPartner(true)}
-                  />
-                  제휴가
-                </label>
-              </div>
-            </div>
           </div>
         </div>
 
-        {/* 플랜 목록 */}
+        {/* 운영솔루션 */}
         <div className="form-section">
-          <h2 className="section-title">플랜 목록</h2>
+          <h2 className="section-title">운영솔루션</h2>
+          <p className="form-subtitle">
+            체육시설 운영에 필요한 솔루션을 선택해주세요 (선택사항)
+          </p>
           <div className="plans-section">
-            {/* 메인 플랜 */}
             <div className="plan-category">
-              <h3 className="category-title">기본 플랜</h3>
-            <div className="plans-grid">
-              {PLANS.filter(plan => plan.category === 'main').map(plan => {
-                const isSelected = isPlanSelected(plan.id);
-                const price = getPlanPrice(plan);
-                const isRequired = plan.isRequired;
+              <div className="plans-grid">
+                {PLANS.filter(plan => plan.category === 'addon').map(plan => {
+                  const isSelected = isPlanSelected(plan.id);
+                  const price = getPlanPrice(plan);
+                  const isDagymManagerSelected = isPlanSelected('manager'); // 다짐매니저 선택 여부
+                  const isDagymManager = plan.id === 'manager';
+                  // 다짐매니저는 항상 선택 가능, 다른 부가서비스는 다짐매니저 선택 후에만 선택 가능
+                  const isDisabled = !isDagymManager && !isDagymManagerSelected;
 
-                return (
-                  <div 
-                    key={plan.id} 
-                    className={`plan-card ${isSelected ? 'selected' : ''} ${isRequired ? 'required' : ''} clickable`}
-                    onClick={() => !isRequired && handlePlanToggle(plan.id, !isSelected)}
-                  >
-                    <div className="plan-header">
-                      <h3 className="plan-name">{plan.name}</h3>
-                      {isRequired && <span className="required-badge">필수</span>}
-                    </div>
-                    
-                    <div className="plan-price">
-                      <span className="price">{price.toLocaleString()}원</span>
-                      <span className="period">/ {billingType === 'yearly' ? '년' : '월'}</span>
-                    </div>
-
-                    <div className="plan-status">
-                      {isRequired ? (
-                        <span className="status-text required">기본 포함</span>
-                      ) : (
-                        <span className={`status-text ${isSelected ? 'selected' : ''}`}>
-                          {isSelected ? '✓ 선택됨' : '클릭하여 선택'}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-            {/* 부가 서비스 */}
-            <div className="plan-category">
-              <h3 className="category-title">부가 서비스</h3>
-            <div className="plans-grid">
-              {PLANS.filter(plan => plan.category === 'addon').map(plan => {
-                const isSelected = isPlanSelected(plan.id);
-                const price = getPlanPrice(plan);
-                const isDagymManagerSelected = isPlanSelected('dagym-manager'); // 다짐매니저 선택 여부
-                const isDagymManager = plan.id === 'dagym-manager';
-                const isDisabled = !isDagymManager && !isDagymManagerSelected;
-
-                return (
-                  <div 
-                    key={plan.id} 
-                    className={`plan-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : 'clickable'}`}
-                    onClick={() => !isDisabled && handleAddonPlanToggle(plan.id, !isSelected)}
-                  >
-                    <div className="plan-header">
-                      <h3 className="plan-name">{plan.name}</h3>
-                      {isDagymManager && <span className="required-badge">기본 필수</span>}
-                    </div>
-                    
-                    <div className="plan-price">
-                      {plan.partnerPrice !== undefined ? (
-                        <div className="price-options">
-                          <div className={`price-option ${isPartner ? 'active' : ''}`}>
-                            <span className="label">제휴가</span>
-                            <span className="price">
-                              {isPartner ? price.toLocaleString() : (billingType === 'yearly' ? plan.partnerPrice : Math.round(plan.partnerPrice / 12)).toLocaleString()}원
-                            </span>
+                  return (
+                    <div 
+                      key={plan.id} 
+                      className={`plan-card ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : 'clickable'}`}
+                      onClick={() => !isDisabled && handleAddonPlanToggle(plan.id, !isSelected)}
+                    >
+                      <div className="plan-header">
+                        <h3 className="plan-name">{plan.name}</h3>
+                        {isDagymManager && <span className="core-badge">핵심 솔루션</span>}
+                      </div>
+                      
+                      <div className="plan-price">
+                        {plan.partnerPrice !== undefined ? (
+                          <div className="price-options">
+                            <div className={`price-option ${isPartner ? 'active' : ''}`}>
+                              <span className="label">제휴가</span>
+                              <span className="price">
+                                {isPartner ? price.toLocaleString() : (billingType === 'yearly' ? plan.partnerPrice : Math.round(plan.partnerPrice / 12)).toLocaleString()}원
+                              </span>
+                            </div>
+                            <div className={`price-option ${!isPartner ? 'active' : ''}`}>
+                              <span className="label">비제휴가</span>
+                              <span className="price">
+                                {!isPartner ? price.toLocaleString() : (billingType === 'yearly' ? plan.nonPartnerPrice! : Math.round(plan.nonPartnerPrice! / 12)).toLocaleString()}원
+                              </span>
+                            </div>
                           </div>
-                          <div className={`price-option ${!isPartner ? 'active' : ''}`}>
-                            <span className="label">비제휴가</span>
-                            <span className="price">
-                              {!isPartner ? price.toLocaleString() : (billingType === 'yearly' ? plan.nonPartnerPrice! : Math.round(plan.nonPartnerPrice! / 12)).toLocaleString()}원
-                            </span>
-                          </div>
-                        </div>
-                      ) : (
-                        <>
-                          <span className="price">{price.toLocaleString()}원</span>
-                          <span className="period">/ {billingType === 'yearly' ? '년' : '월'}</span>
-                        </>
-                      )}
-                    </div>
+                        ) : (
+                          <>
+                            <span className="price">{price.toLocaleString()}원</span>
+                            <span className="period">/ {billingType === 'yearly' ? '년' : '월'}</span>
+                          </>
+                        )}
+                      </div>
 
-                    <div className="plan-status">
-                      {isDisabled ? (
-                        <span className="status-text disabled">다짐매니저 필요</span>
-                      ) : (
-                        <span className={`status-text ${isSelected ? 'selected' : ''}`}>
-                          {isSelected ? '✓ 선택됨' : '클릭하여 선택'}
-                        </span>
-                      )}
+                      <div className="plan-status">
+                        {isDisabled ? (
+                          <span className="status-text disabled">
+                            ⚠️ 다짐매니저 선택 후 이용 가능
+                          </span>
+                        ) : (
+                          <span className={`status-text ${isSelected ? 'selected' : ''}`}>
+                            {isSelected ? '✓ 선택됨' : '클릭하여 선택'}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
@@ -375,23 +310,76 @@ export function PlanSelectionPage() {
         <div className="form-section">
           <h2 className="section-title">선택된 플랜</h2>
           <div className="selected-summary">
-          {selectedPlans.length > 0 ? (
-            <div className="selected-plans">
-              {selectedPlans.map(plan => (
-                <div key={plan.planId} className="selected-plan-item">
-                  <span className="plan-name">{plan.planName}</span>
-                  <span className="plan-price">{plan.price.toLocaleString()}원</span>
+            {selectedPlans.length > 0 ? (
+              <div className="selected-plans">
+                <div className="partner-status">
+                  <span className={`partner-badge ${isPartner ? 'partner' : 'non-partner'}`}>
+                    {isPartner ? '🤝 제휴가 적용' : '🏢 비제휴가 적용'}
+                  </span>
                 </div>
-              ))}
-              <div className="total-amount">
-                <strong>총 합계: {totalAmount.toLocaleString()}원</strong>
+                {selectedPlans.map(plan => (
+                  <div key={plan.planId} className="selected-plan-item">
+                    <span className="plan-name">{plan.planName}</span>
+                    <span className="plan-price">{plan.price.toLocaleString()}원</span>
+                  </div>
+                ))}
+                <div className="total-amount">
+                  <strong>총 합계: {totalAmount.toLocaleString()}원</strong>
+                </div>
               </div>
-            </div>
-          ) : (
-            <p className="no-selection">선택된 플랜이 없습니다</p>
-          )}
+            ) : (
+              <p className="no-selection">선택된 플랜이 없습니다</p>
+            )}
           </div>
         </div>
+
+        {/* 매출솔루션 */}
+        <div className="form-section">
+          <h2 className="section-title">매출솔루션</h2>
+          <p className="form-subtitle">
+            매출 관리를 위한 솔루션을 선택해주세요 (선택사항)
+          </p>
+          <div className="plans-section">
+            <div className="plan-category">
+              <div className="plans-grid">
+                {PLANS.filter(plan => plan.category === 'main').map(plan => {
+                  const isSelected = isPlanSelected(plan.id);
+                  const price = getPlanPrice(plan);
+                  const isRequired = plan.isRequired;
+
+                  return (
+                    <div 
+                      key={plan.id} 
+                      className={`plan-card ${isSelected ? 'selected' : ''} ${isRequired ? 'required' : ''} clickable`}
+                      onClick={() => handlePlanToggle(plan.id, !isSelected)}
+                    >
+                      <div className="plan-header">
+                        <h3 className="plan-name">{plan.name}</h3>
+                        {isRequired && <span className="required-badge">필수</span>}
+                      </div>
+                      
+                      <div className="plan-price">
+                        <span className="price">{price.toLocaleString()}원</span>
+                        <span className="period">/ {billingType === 'yearly' ? '년' : '월'}</span>
+                      </div>
+
+                      <div className="plan-status">
+                        {isRequired ? (
+                          <span className="status-text required">기본 포함</span>
+                        ) : (
+                          <span className={`status-text ${isSelected ? 'selected' : ''}`}>
+                            {isSelected ? '✓ 선택됨' : '클릭하여 선택'}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+
 
         {/* 버튼 영역 */}
         <div className="form-actions">
@@ -406,7 +394,6 @@ export function PlanSelectionPage() {
             type="button"
             onClick={handleSubmit}
             className="btn-primary"
-            disabled={selectedPlans.length === 0}
           >
             다음 단계
           </button>
